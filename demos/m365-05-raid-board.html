@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project Lighthouse — RAID Log Board · ABC Corp (fictional)</title>
+<style>
+  :root{
+    /* ——— design tokens: edit these lines to re-skin the whole page ——— */
+    --ground:#F5F7FA; --panel:#FFFFFF; --ink:#16202E; --ink-soft:#4A5768;
+    --line:#D6DEE8; --lens-m365:#3D5ADB; --lens-m365-tint:#EBEFFC;
+    --lens-gh:#0E7C6B; --lens-gh-tint:#E6F4F1;
+    --honest:#9A5B00; --honest-tint:#FFF6E8;
+    --ok:#1F7A33; --ok-tint:#E7F3EA; --warn:#B05A00; --warn-tint:#FDF1E3;
+    --bad:#B3261E; --bad-tint:#FBEAE9;
+    --sans:system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,"Cascadia Code","Segoe UI Mono",Consolas,Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);line-height:1.55;font-size:15px}
+
+  /* ── shared artifact bar (identical convention across all demos) ── */
+  .abar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:14px;
+    background:var(--panel);border-bottom:1px solid var(--line);padding:9px 20px;font-size:12.5px}
+  .abar .lens{display:inline-flex;align-items:center;gap:7px;font-weight:600;color:var(--lens-m365);white-space:nowrap}
+  .abar .lens .dot{width:9px;height:9px;border-radius:50%;background:var(--lens-m365)}
+  .abar .file{font-family:var(--mono);font-size:11.5px;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .abar .badge{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--honest);background:var(--honest-tint);border:1px solid var(--honest);border-radius:4px;padding:2px 7px;white-space:nowrap}
+  .abar .back{margin-left:auto;color:var(--ink);text-decoration:none;font-weight:600;white-space:nowrap}
+  .abar .back:hover{color:var(--lens-m365)}
+
+  .wrap{max-width:980px;margin:0 auto;padding:28px 20px 80px}
+
+  .rep-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 18px;margin-bottom:6px}
+  h1{font-size:26px;font-weight:800;letter-spacing:-.02em;margin:0}
+  .rep-meta{font-family:var(--mono);font-size:12px;color:var(--ink-soft)}
+  .fictional-note{font-size:12.5px;color:var(--ink-soft);margin:0 0 18px}
+
+  /* no-save banner */
+  .nosave{display:flex;align-items:flex-start;gap:12px;background:var(--honest-tint);border:1px solid var(--honest);
+    border-radius:8px;padding:12px 16px;margin:6px 0 22px}
+  .nosave .sign{font-size:18px;line-height:1.2}
+  .nosave p{margin:0;font-size:14px;color:var(--ink)}
+  .nosave b{color:var(--honest)}
+
+  /* toolbar: filter tabs + sort */
+  .toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:14px}
+  .ftab{font:600 13px var(--sans);color:var(--ink);background:var(--panel);border:1px solid var(--line);
+    border-radius:18px;padding:6px 14px;cursor:pointer}
+  .ftab .n{font-family:var(--mono);font-size:11px;color:var(--ink-soft);margin-left:4px}
+  .ftab[aria-pressed="true"]{background:var(--lens-m365);border-color:var(--lens-m365);color:#fff}
+  .ftab[aria-pressed="true"] .n{color:var(--lens-m365-tint)}
+  .ftab:focus-visible,.sort-btn:focus-visible,.copy-btn:focus-visible,.add-form button:focus-visible{
+    outline:2px solid var(--lens-m365);outline-offset:2px}
+  .sort-btn{margin-left:auto;font:600 13px var(--sans);color:var(--ink);background:var(--panel);
+    border:1px solid var(--line);border-radius:6px;padding:6px 14px;cursor:pointer}
+  .sort-btn[aria-pressed="true"]{background:var(--lens-m365-tint);border-color:var(--lens-m365);color:var(--lens-m365)}
+
+  /* board table */
+  section.block{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin-bottom:16px}
+  section.block h2{font-size:13px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 14px}
+  table.raid{width:100%;border-collapse:collapse;font-size:13.5px}
+  table.raid th{text-align:left;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-soft);
+    border-bottom:1px solid var(--line);padding:6px 10px 6px 0}
+  table.raid td{border-bottom:1px solid var(--line);padding:9px 10px 9px 0;vertical-align:top}
+  table.raid tr:last-child td{border-bottom:none}
+  td.idc{font-family:var(--mono);font-size:12px;white-space:nowrap;color:var(--ink-soft);font-weight:700}
+  td.titlec b{display:block}
+  td.titlec .det{color:var(--ink-soft);font-size:13px}
+  td.ownerc{white-space:nowrap}
+  .typechip{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.05em;border-radius:4px;
+    padding:2px 8px;white-space:nowrap;color:var(--lens-m365);background:var(--lens-m365-tint);border:1px solid var(--lens-m365)}
+  .sev{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.05em;border-radius:4px;padding:2px 8px;white-space:nowrap}
+  .sev.high{color:var(--bad);background:var(--bad-tint);border:1px solid var(--bad)}
+  .sev.med{color:var(--warn);background:var(--warn-tint);border:1px solid var(--warn)}
+  .sev.low{color:var(--ok);background:var(--ok-tint);border:1px solid var(--ok)}
+  .stat{font-size:12.5px;white-space:nowrap;color:var(--ink-soft)}
+  .stat i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:baseline}
+  .stat.open i{background:var(--bad)}
+  .stat.monitoring i{background:var(--warn)}
+  .stat.closed i{background:var(--ok)}
+  .empty{padding:16px 0;color:var(--ink-soft);font-size:13.5px;font-style:italic}
+
+  /* add form */
+  .add-form{display:grid;grid-template-columns:130px 1fr 160px 110px auto;gap:10px;align-items:end}
+  @media (max-width:760px){.add-form{grid-template-columns:1fr 1fr}}
+  .add-form label{display:grid;gap:4px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);font-weight:700}
+  .add-form input,.add-form select{font:400 13.5px var(--sans);color:var(--ink);background:var(--panel);
+    border:1px solid var(--line);border-radius:6px;padding:7px 9px;min-width:0}
+  .add-form input:focus-visible,.add-form select:focus-visible{outline:2px solid var(--lens-m365);outline-offset:1px}
+  .add-form button{font:600 13px var(--sans);color:#fff;background:var(--lens-m365);border:none;border-radius:6px;
+    padding:9px 18px;cursor:pointer;white-space:nowrap}
+  .add-form button:hover{background:var(--ink)}
+  .add-hint{font-size:12px;color:var(--ink-soft);margin:10px 0 0}
+
+  /* export */
+  .export-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .export-row .scope{font-size:12.5px;color:var(--ink-soft)}
+
+  /* ── shared "How this was made" panel (identical convention across all demos) ── */
+  details.made{margin-top:34px;border:1px solid var(--honest);border-radius:10px;background:var(--honest-tint);overflow:hidden}
+  details.made summary{cursor:pointer;padding:13px 18px;font-weight:700;font-size:14px;color:var(--honest);list-style:none}
+  details.made summary::-webkit-details-marker{display:none}
+  details.made summary::before{content:"▸ ";font-family:var(--mono)}
+  details.made[open] summary::before{content:"▾ "}
+  .made-body{padding:4px 18px 18px;display:grid;gap:16px}
+  .made-body h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--honest);margin:0 0 8px}
+  .made-body pre{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px;font-family:var(--mono);
+    font-size:12.5px;line-height:1.6;white-space:pre-wrap;margin:0;color:var(--ink)}
+  .made-body p{margin:0;font-size:13.5px;color:var(--ink)}
+  .made-body a{color:var(--lens-m365)}
+  .copy-btn{margin-top:8px;font:600 12.5px var(--sans);color:var(--panel);background:var(--ink);border:none;border-radius:6px;
+    padding:7px 14px;cursor:pointer}
+  .copy-btn:hover{background:var(--lens-m365)}
+  .export-row .copy-btn{margin-top:0}
+
+  footer.colophon{margin-top:26px;font-size:12px;color:var(--ink-soft);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  footer.colophon a{color:var(--ink-soft)}
+</style>
+</head>
+<body>
+
+<header class="abar">
+  <span class="lens"><span class="dot"></span>M365 Copilot · business lens</span>
+  <span class="file">demos/m365-05-raid-board.html</span>
+  <span class="badge">Fictional data</span>
+  <a class="back" href="../index.html">← all artifacts</a>
+</header>
+
+<div class="wrap">
+
+  <div class="rep-head">
+    <h1>Project Lighthouse — RAID log board</h1>
+    <span class="rep-meta">working session · Thu 11 Jun 2026 · facilitated by P. Mehta</span>
+  </div>
+  <p class="fictional-note">ABC Corp — a fictional company. Every name, number, and date on this page is invented for demonstration.</p>
+
+  <div class="nosave" role="note">
+    <span class="sign" aria-hidden="true">⚠</span>
+    <p><b>This board does not save.</b> It's a working surface for the meeting — export before you close the tab.</p>
+  </div>
+
+  <div class="toolbar" role="group" aria-label="Filter and sort the board">
+    <button class="ftab" data-filter="all" aria-pressed="true">All <span class="n" id="count-all"></span></button>
+    <button class="ftab" data-filter="R" aria-pressed="false">Risks <span class="n" id="count-R"></span></button>
+    <button class="ftab" data-filter="A" aria-pressed="false">Assumptions <span class="n" id="count-A"></span></button>
+    <button class="ftab" data-filter="I" aria-pressed="false">Issues <span class="n" id="count-I"></span></button>
+    <button class="ftab" data-filter="D" aria-pressed="false">Dependencies <span class="n" id="count-D"></span></button>
+    <button class="sort-btn" id="sort-toggle" aria-pressed="false">Sort by severity: off</button>
+  </div>
+
+  <section class="block" aria-label="RAID items">
+    <h2 id="board-title">All items</h2>
+    <table class="raid">
+      <thead>
+        <tr><th>ID</th><th>Type</th><th>Item</th><th>Owner</th><th>Severity</th><th>Status</th></tr>
+      </thead>
+      <tbody id="board-body"></tbody>
+    </table>
+    <div class="empty" id="board-empty" hidden>No items in this category yet — add one below.</div>
+  </section>
+
+  <section class="block" aria-label="Add an item">
+    <h2>Add an item (during the meeting)</h2>
+    <form class="add-form" id="add-form">
+      <label>Type
+        <select id="f-type" required>
+          <option value="R">Risk</option>
+          <option value="A">Assumption</option>
+          <option value="I">Issue</option>
+          <option value="D">Dependency</option>
+        </select>
+      </label>
+      <label>Title
+        <input id="f-title" type="text" required placeholder="Short description of the item" maxlength="160">
+      </label>
+      <label>Owner
+        <input id="f-owner" type="text" required placeholder="e.g. M. Tanaka" maxlength="40">
+      </label>
+      <label>Severity
+        <select id="f-sev" required>
+          <option value="high">High</option>
+          <option value="med" selected>Med</option>
+          <option value="low">Low</option>
+        </select>
+      </label>
+      <button type="submit">Add to board</button>
+    </form>
+    <p class="add-hint">New items get the next free ID for their type, status <b>open</b> — and exist only in this tab until you export.</p>
+  </section>
+
+  <section class="block" aria-label="Export the board">
+    <h2>Export</h2>
+    <div class="export-row">
+      <button class="copy-btn" id="export-md">Export as Markdown table</button>
+      <button class="copy-btn" id="export-txt">Export as plain text</button>
+      <span class="scope" id="export-scope">Exports the current filtered view (all items, current order).</span>
+    </div>
+  </section>
+
+  <details class="made">
+    <summary>How this was made — the prompt, where it runs, and an honesty note</summary>
+    <div class="made-body">
+      <section>
+        <h3>The prompt</h3>
+        <pre id="prompt-text">Build a single-file HTML RAID log seeded with these items [paste].
+I want to filter by Risks/Assumptions/Issues/Dependencies, add items
+during the meeting, sort by severity, and copy the whole log out as
+a Markdown table afterwards. Make it obvious that the page doesn't
+save anything.</pre>
+        <button class="copy-btn" data-copy="prompt-text">Copy prompt</button>
+      </section>
+      <section>
+        <h3>Where this runs</h3>
+        <p>Microsoft 365 Copilot Pages lets you create, edit, and preview runnable code directly inside a page
+        (<a href="https://support.microsoft.com/en-us/topic/build-lightweight-apps-within-microsoft-365-copilot-pages-fd42d9f3-258e-4bf9-8c5e-a73083a197cc">“Build lightweight apps within Microsoft 365 Copilot Pages”, Microsoft Support</a>).
+        Code previews in Copilot Chat and Pages are governed by a Cloud Policy that is
+        <em>enabled by default</em> and can be disabled by your admin
+        (<a href="https://learn.microsoft.com/en-us/microsoft-365/loop/cpcn-admin-configuration">Microsoft Learn: admin configuration</a>).
+        Universal fallback that needs no special features: ask Copilot for a single HTML file, copy the code into a
+        file saved as <code>.html</code>, and open it in your browser.</p>
+      </section>
+      <section>
+        <h3>Honesty note</h3>
+        <p>This is a reference artifact, built with an AI coding agent (Claude Code) to illustrate the output format —
+        it was not generated by M365 Copilot. The prompt above is what you would give Copilot to produce something
+        like it. Results vary by model, tenant configuration, and licence: treat this as a pattern, not a guaranteed output.</p>
+      </section>
+    </div>
+  </details>
+
+  <footer class="colophon">
+    <span>Part of <a href="../index.html">“The artifact is the demo — HTML in the enterprise”</a></span>
+    <span>Single file · no external requests · works offline</span>
+  </footer>
+
+</div>
+
+<script>
+  /* ── seed data: 14 RAID items (all fictional) ── */
+  var TYPE_NAMES = {R:'Risk', A:'Assumption', I:'Issue', D:'Dependency'};
+  var items = [
+    {id:'R-01', type:'R', title:'Duplicate customer records in wave-2 source data', detail:'Unresolved duplicates could corrupt billing history when batch-billing replays invoices after migration.', owner:'S. de Wit', sev:'high', status:'open'},
+    {id:'R-02', type:'R', title:'Vendor API rate limits during peak migration windows', detail:'Throughput caps on the pricing-service vendor API may stretch the wave-2 schedule past 26 Jun.', owner:'R. Okafor', sev:'med', status:'monitoring'},
+    {id:'R-03', type:'R', title:'Key SMEs on leave through July', detail:'Decommission review capacity is thin; deputies are named but have not yet shadowed a full review cycle.', owner:'A. Kowalczyk', sev:'med', status:'monitoring'},
+    {id:'R-04', type:'R', title:'Rollback procedure untested at wave-2 volume', detail:'The staging dry-run on 18 Jun is the first test of order-gateway rollback above 50k records.', owner:'M. Tanaka', sev:'high', status:'open'},
+    {id:'R-05', type:'R', title:'Training material drift after tooling change', detail:'Screenshots in the onboarding deck predate the new case tooling; low impact, easily refreshed.', owner:'J. Lindqvist', sev:'low', status:'open'},
+    {id:'A-01', type:'A', title:'Wave-2 data volumes match wave-1 profile', detail:'Capacity planning assumes ±10% of wave-1 record counts; a profiling run will confirm by 16 Jun.', owner:'R. Okafor', sev:'med', status:'monitoring'},
+    {id:'A-02', type:'A', title:'Change board approves decommission plan first pass', detail:'Schedule has no slack for a resubmission cycle; legal pre-review was done to de-risk this.', owner:'P. Mehta', sev:'med', status:'open'},
+    {id:'A-03', type:'A', title:'No regulatory reporting changes before go-live', detail:'The compliance calendar shows nothing landing before 28 Aug; confirmed with the policy desk in May.', owner:'A. Kowalczyk', sev:'low', status:'closed'},
+    {id:'I-01', type:'I', title:'Environment access delays blocked wave-2 start', detail:'Migration started two days late because firewall changes for batch-billing missed the change window.', owner:'M. Tanaka', sev:'high', status:'open'},
+    {id:'I-02', type:'I', title:'Reconciliation report mislabels currency column', detail:'EUR amounts show under a column headed “local”; cosmetic but it confused the wave-1 sign-off review.', owner:'S. de Wit', sev:'low', status:'closed'},
+    {id:'I-03', type:'I', title:'Duplicate alerts from old and new monitoring', detail:'Both stacks page the on-call for the same order-gateway events; suppression rule is drafted.', owner:'J. Lindqvist', sev:'med', status:'monitoring'},
+    {id:'D-01', type:'D', title:'Vendor night-window batching agreement', detail:'Wave-2 throughput plan depends on the vendor honouring the agreed 22:00–05:00 batch window.', owner:'R. Okafor', sev:'high', status:'monitoring'},
+    {id:'D-02', type:'D', title:'Legal review of decommission plan', detail:'Sign-off moved to 17 Jul to fit the legal review cycle; everything after it shifts if this slips.', owner:'P. Mehta', sev:'med', status:'open'},
+    {id:'D-03', type:'D', title:'Finance freeze calendar for August', detail:'Go-live cutover needs a two-day posting freeze; dates requested from finance, answer due 20 Jun.', owner:'A. Kowalczyk', sev:'med', status:'open'}
+  ];
+
+  var currentFilter = 'all';
+  var sortBySeverity = false;
+  var SEV_RANK = {high:0, med:1, low:2};
+  var SEV_LABEL = {high:'HIGH', med:'MED', low:'LOW'};
+
+  function visibleItems(){
+    var list = items.filter(function(it){ return currentFilter==='all' || it.type===currentFilter; });
+    if (sortBySeverity){
+      list = list.slice().sort(function(a,b){
+        return (SEV_RANK[a.sev]-SEV_RANK[b.sev]) || a.id.localeCompare(b.id);
+      });
+    }
+    return list;
+  }
+
+  function esc(s){
+    return String(s).replace(/[&<>"]/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];
+    });
+  }
+
+  function render(){
+    var list = visibleItems();
+    var tbody = document.getElementById('board-body');
+    tbody.innerHTML = list.map(function(it){
+      return '<tr>'
+        + '<td class="idc">'+esc(it.id)+'</td>'
+        + '<td><span class="typechip">'+esc(TYPE_NAMES[it.type])+'</span></td>'
+        + '<td class="titlec"><b>'+esc(it.title)+'</b><span class="det">'+esc(it.detail)+'</span></td>'
+        + '<td class="ownerc">'+esc(it.owner)+'</td>'
+        + '<td><span class="sev '+esc(it.sev)+'">'+SEV_LABEL[it.sev]+'</span></td>'
+        + '<td><span class="stat '+esc(it.status)+'"><i></i>'+esc(it.status)+'</span></td>'
+        + '</tr>';
+    }).join('');
+    document.getElementById('board-empty').hidden = list.length > 0;
+
+    /* live counts */
+    var counts = {all:items.length, R:0, A:0, I:0, D:0};
+    items.forEach(function(it){ counts[it.type]++; });
+    ['all','R','A','I','D'].forEach(function(k){
+      document.getElementById('count-'+k).textContent = '('+counts[k]+')';
+    });
+
+    var scopeName = currentFilter==='all' ? 'all items' : TYPE_NAMES[currentFilter].toLowerCase()+'s only';
+    document.getElementById('board-title').textContent =
+      (currentFilter==='all' ? 'All items' : TYPE_NAMES[currentFilter]+'s')
+      + (sortBySeverity ? ' · sorted by severity' : '');
+    document.getElementById('export-scope').textContent =
+      'Exports the current filtered view ('+scopeName+', '+(sortBySeverity?'severity order':'current order')+').';
+  }
+
+  /* filter tabs */
+  document.querySelectorAll('.ftab').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      currentFilter = btn.getAttribute('data-filter');
+      document.querySelectorAll('.ftab').forEach(function(b){
+        b.setAttribute('aria-pressed', b===btn ? 'true' : 'false');
+      });
+      render();
+    });
+  });
+
+  /* sort toggle */
+  document.getElementById('sort-toggle').addEventListener('click', function(){
+    sortBySeverity = !sortBySeverity;
+    this.setAttribute('aria-pressed', String(sortBySeverity));
+    this.textContent = 'Sort by severity: ' + (sortBySeverity ? 'on' : 'off');
+    render();
+  });
+
+  /* add-item form (in-memory only) */
+  document.getElementById('add-form').addEventListener('submit', function(e){
+    e.preventDefault();
+    var type = document.getElementById('f-type').value;
+    var title = document.getElementById('f-title').value.trim();
+    var owner = document.getElementById('f-owner').value.trim();
+    var sev = document.getElementById('f-sev').value;
+    if (!title || !owner) return;
+    var n = items.filter(function(it){ return it.type===type; }).length + 1;
+    var id = type + '-' + (n<10 ? '0'+n : n);
+    items.push({id:id, type:type, title:title, detail:'Added during the meeting — detail to be filled in.', owner:owner, sev:sev, status:'open'});
+    this.reset();
+    document.getElementById('f-title').focus();
+    render();
+  });
+
+  /* exports — serialise the CURRENT filtered view */
+  function exportMarkdown(){
+    var rows = visibleItems();
+    var lines = ['| ID | Type | Title | Detail | Owner | Severity | Status |',
+                 '| --- | --- | --- | --- | --- | --- | --- |'];
+    rows.forEach(function(it){
+      lines.push('| '+[it.id, TYPE_NAMES[it.type], it.title, it.detail, it.owner, it.sev, it.status]
+        .map(function(v){ return String(v).replace(/\|/g,'\\|'); }).join(' | ')+' |');
+    });
+    return 'Project Lighthouse RAID log — exported '+new Date().toLocaleString()+' (fictional demo data)\n\n'+lines.join('\n')+'\n';
+  }
+  function exportPlain(){
+    var rows = visibleItems();
+    var out = ['PROJECT LIGHTHOUSE — RAID LOG ('+rows.length+' items, fictional demo data)',
+               'Exported '+new Date().toLocaleString(), ''];
+    rows.forEach(function(it){
+      out.push(it.id+' ['+TYPE_NAMES[it.type].toUpperCase()+'] '+it.title);
+      out.push('    '+it.detail);
+      out.push('    owner: '+it.owner+' · severity: '+it.sev+' · status: '+it.status);
+      out.push('');
+    });
+    return out.join('\n');
+  }
+
+  /* shared copy-to-clipboard with fallback for file:// contexts */
+  function copyToClipboard(btn, text){
+    function done(ok){
+      var old = btn.textContent;
+      btn.textContent = ok ? 'Copied ✓' : 'Copy failed — select the text manually';
+      setTimeout(function(){ btn.textContent = old; }, 2200);
+    }
+    function fallback(){
+      var ta = document.createElement('textarea');
+      ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select();
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch(e){}
+      document.body.removeChild(ta); done(ok);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function(){done(true);}, function(){fallback();});
+    } else { fallback(); }
+  }
+
+  document.getElementById('export-md').addEventListener('click', function(){
+    copyToClipboard(this, exportMarkdown());
+  });
+  document.getElementById('export-txt').addEventListener('click', function(){
+    copyToClipboard(this, exportPlain());
+  });
+  document.querySelectorAll('.copy-btn[data-copy]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      copyToClipboard(btn, document.getElementById(btn.getAttribute('data-copy')).textContent);
+    });
+  });
+
+  render();
+</script>
+</body>
+</html>
