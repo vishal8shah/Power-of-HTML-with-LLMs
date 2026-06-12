@@ -3,16 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>INC-2417 — Post-mortem: duplicate invoices in batch-billing · ABC Corp (fictional)</title>
+<title>INC-2417 · Post-mortem: duplicate invoices in batch-billing · ABC Corp (fictional)</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%2316202E'/><rect x='7' y='13' width='8' height='6' rx='2' fill='%233D5ADB'/><rect x='17' y='13' width='8' height='6' rx='2' fill='%230E7C6B'/></svg>">
 <style>
   :root{
-    /* ——— design tokens: edit these lines to re-skin the whole page ——— */
+    /* ── design tokens: edit these lines to re-skin the whole page ── */
     --ground:#F5F7FA; --panel:#FFFFFF; --ink:#16202E; --ink-soft:#4A5768;
     --line:#D6DEE8; --lens-m365:#3D5ADB; --lens-m365-tint:#EBEFFC;
     --lens-gh:#0E7C6B; --lens-gh-tint:#E6F4F1;
     --honest:#9A5B00; --honest-tint:#FFF6E8;
     --ok:#1F7A33; --ok-tint:#E7F3EA; --warn:#B05A00; --warn-tint:#FDF1E3;
     --bad:#B3261E; --bad-tint:#FBEAE9;
+    --shadow:0 1px 2px rgba(22,32,46,.05),0 4px 14px rgba(22,32,46,.04);
     --sans:system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     --mono:ui-monospace,"Cascadia Code","Segoe UI Mono",Consolas,Menlo,monospace;
   }
@@ -21,7 +23,7 @@
 
   /* ── shared artifact bar (identical convention across all demos) ── */
   .abar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:14px;
-    background:var(--panel);border-bottom:1px solid var(--line);padding:9px 20px;font-size:12.5px}
+    background:rgba(255,255,255,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);padding:9px 20px;font-size:12.5px}
   .abar .lens{display:inline-flex;align-items:center;gap:7px;font-weight:600;color:var(--lens-gh);white-space:nowrap}
   .abar .lens .dot{width:9px;height:9px;border-radius:50%;background:var(--lens-gh)}
   .abar .file{font-family:var(--mono);font-size:11.5px;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -31,21 +33,22 @@
   .abar .back:hover{color:var(--lens-gh)}
 
   .wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px}
-  h1{font-size:24px;font-weight:800;letter-spacing:-.02em;margin:0}
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--lens-gh);margin-bottom:8px}
+  h1{font-size:24px;font-weight:800;letter-spacing:-.022em;margin:0}
   .fictional-note{font-size:12.5px;color:var(--ink-soft);margin:6px 0 18px}
 
   /* incident header */
-  .inc-head{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin-bottom:16px}
+  .inc-head{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin-bottom:16px;box-shadow:var(--shadow)}
   .inc-id{font-family:var(--mono);font-weight:700;color:var(--lens-gh);font-size:14px}
   .sev-chip{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.07em;
     color:#fff;background:var(--warn);border-radius:5px;padding:3px 11px;vertical-align:2px}
   .closed-chip{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.07em;
     color:#fff;background:var(--ink-soft);border-radius:5px;padding:3px 11px;vertical-align:2px}
-  .inc-meta{display:flex;flex-wrap:wrap;gap:6px 24px;margin-top:12px;font-size:13px;color:var(--ink-soft)}
+  .inc-meta{display:flex;flex-wrap:wrap;gap:6px 24px;margin-top:12px;font-family:var(--mono);font-size:12px;color:var(--ink-soft)}
   .inc-meta b{color:var(--ink);font-weight:600}
   .inc-meta code{font-family:var(--mono);font-size:12px;background:var(--ground);border:1px solid var(--line);border-radius:4px;padding:1px 6px}
 
-  section.block{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin-bottom:16px}
+  section.block{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin-bottom:16px;box-shadow:var(--shadow)}
   section.block h2{font-size:13px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 14px}
 
   /* impact cards */
@@ -110,7 +113,7 @@
   table.rem{width:100%;border-collapse:collapse;font-size:13.5px}
   table.rem th{text-align:left;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-soft);
     border-bottom:1px solid var(--line);padding:6px 10px 6px 0}
-  table.rem td{border-bottom:1px solid var(--line);padding:9px 10px 9px 0;vertical-align:top}
+  table.rem td{border-bottom:1px solid var(--line);padding:11px 10px 11px 0;vertical-align:top}
   table.rem tr:last-child td{border-bottom:none}
   table.rem input[type=checkbox]{width:16px;height:16px;accent-color:var(--lens-gh)}
   .st{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.05em;border-radius:4px;padding:2px 8px;white-space:nowrap}
@@ -124,7 +127,7 @@
   .blameless p{margin:0;font-size:13.5px}
 
   /* ── shared "How this was made" panel (identical convention across all demos) ── */
-  details.made{margin-top:34px;border:1px solid var(--honest);border-radius:10px;background:var(--honest-tint);overflow:hidden}
+  details.made{margin-top:34px;border:1px solid var(--honest);border-radius:12px;background:var(--honest-tint);overflow:hidden}
   details.made summary{cursor:pointer;padding:13px 18px;font-weight:700;font-size:14px;color:var(--honest);list-style:none}
   details.made summary::-webkit-details-marker{display:none}
   details.made summary::before{content:"▸ ";font-family:var(--mono)}
@@ -146,7 +149,7 @@
     body{background:#fff;font-size:12px}
     .abar,details.made,footer.colophon,.filters{display:none}
     .wrap{max-width:none;padding:0}
-    section.block,.inc-head{border:1px solid #bbb;break-inside:avoid;margin-bottom:10px}
+    section.block,.inc-head{border:1px solid #bbb;break-inside:avoid;margin-bottom:10px;box-shadow:none}
     .log{white-space:pre-wrap}
   }
 </style>
@@ -154,8 +157,8 @@
 <body>
 
 <header class="abar">
-  <span class="lens"><span class="dot"></span>GitHub Copilot · engineering lens</span>
-  <span class="file">demos/gh-09-postmortem.html</span>
+  <span class="lens"><span class="dot"></span>Engineering lens</span>
+  <span class="file">demos/eng-09-postmortem.html</span>
   <span class="badge">Fictional data</span>
   <a class="back" href="../index.html">← all artifacts</a>
 </header>
@@ -163,9 +166,11 @@
 <div class="wrap">
 
   <div class="inc-head">
+    <div class="eyebrow">Incident post-mortem · INC-2417</div>
     <div><span class="inc-id">INC-2417</span> &nbsp; <span class="sev-chip">SEV-2</span> &nbsp; <span class="closed-chip">CLOSED</span></div>
     <h1 style="margin-top:6px">Post-mortem: duplicate invoices in the overnight batch-billing run</h1>
-    <p class="fictional-note">ABC Corp — a fictional company. Every name, number, log line, and date on this page is invented for demonstration.</p>
+    <p class="fictional-note">ABC Corp is a fictional company. Every name, number and date is invented.
+    This is a reference artifact generated with an LLM coding agent; the brief that produces it is at the bottom of this page.</p>
     <div class="inc-meta">
       <span>Incident date <b>3 Jun 2026, 02:14–05:26 CET</b></span>
       <span>Services affected <code>batch-billing</code> <code>order-gateway</code></span>
@@ -184,12 +189,12 @@
       <div class="stat"><div class="num">2</div><div class="lbl">services affected</div></div>
     </div>
     <p style="margin:14px 0 0;font-size:13.5px;color:var(--ink-soft)">The duplicates were caught by the scheduled
-    reconciliation check before the dispatch window opened — no customer ever saw a duplicate invoice and no
+    reconciliation check before the dispatch window opened: no customer ever saw a duplicate invoice and no
     customer communication was required.</p>
   </section>
 
   <section class="block" aria-label="Timeline">
-    <h2>Timeline — <span id="count-label">12 shown</span></h2>
+    <h2>Timeline · <span id="count-label">12 shown</span></h2>
     <div class="filters" role="group" aria-label="Filter timeline by phase">
       <button data-phase="all" aria-pressed="true">All</button>
       <button data-phase="detect" aria-pressed="false">Detect</button>
@@ -205,7 +210,7 @@
       <li class="detect"><div class="t-head"><time>02:19</time><span class="phase detect">DETECT</span></div>
         <p>Run resumes against the new primary; re-inserted drafts for segments 7–12 are written as new rows. Duplicates begin accumulating silently.</p></li>
       <li class="detect"><div class="t-head"><time>02:58</time><span class="phase detect">DETECT</span></div>
-        <p>Batch run completes with status <code>SUCCESS</code>. Row-count delta vs the previous night is +4.1% — inside the alerting threshold, so no alert fires.</p></li>
+        <p>Batch run completes with status <code>SUCCESS</code>. Row-count delta vs the previous night is +4.1%, inside the alerting threshold, so no alert fires.</p></li>
       <li class="detect"><div class="t-head"><time>04:30</time><span class="phase detect">DETECT</span></div>
         <p>Scheduled morning reconciliation check starts, comparing draft invoices against source orders.</p></li>
       <li class="detect"><div class="t-head"><time>04:36</time><span class="phase detect">DETECT</span></div>
@@ -213,7 +218,7 @@
       <li class="escalate"><div class="t-head"><time>04:41</time><span class="phase escalate">ESCALATE</span></div>
         <p>On-call (M. Tanaka) acknowledges, confirms the pattern is run-wide, declares SEV-2 and opens INC-2417.</p></li>
       <li class="escalate"><div class="t-head"><time>04:48</time><span class="phase escalate">ESCALATE</span></div>
-        <p>billing-ops and order-gateway on-call (J. Lindqvist) join the bridge. Outbound invoice dispatch queue paused as a precaution — dispatch window opens at 07:00, so customer exposure is zero while paused.</p></li>
+        <p>billing-ops and order-gateway on-call (J. Lindqvist) join the bridge. Outbound invoice dispatch queue paused as a precaution; dispatch window opens at 07:00, so customer exposure is zero while paused.</p></li>
       <li class="mitigate"><div class="t-head"><time>04:57</time><span class="phase mitigate">MITIGATE</span></div>
         <p>Duplicates traced to the 02:15 retry of segments 7–12 following the database failover. Duplicate set fully identified by <code>(order_ref, run_id)</code> pairs.</p></li>
       <li class="mitigate"><div class="t-head"><time>05:06</time><span class="phase mitigate">MITIGATE</span></div>
@@ -237,25 +242,25 @@
     <pre class="log" aria-label="Reconciliation alert log excerpt"><span class="cap"># reconciliation-check · alert log · 3 Jun 2026 (fictional excerpt)</span>
 04:36:02 <span class="err">ALERT</span> recon.invoice  1,842 draft invoices share order_ref with another draft
 04:36:02 <span class="err">ALERT</span> recon.invoice  affected segments: 7,8,9,10,11,12 · run_id=2026-06-03T02:00
-04:36:03 <span class="okl">INFO </span> recon.invoice  dispatch queue state: HELD until 07:00 window — no drafts sent
+04:36:03 <span class="okl">INFO </span> recon.invoice  dispatch queue state: HELD until 07:00 window · no drafts sent
 04:36:04 <span class="okl">INFO </span> pager          paging billing on-call · policy=sev-undetermined</pre>
   </section>
 
   <section class="block" aria-label="Root cause: five whys">
-    <h2>Root cause — five whys</h2>
+    <h2>Root cause · five whys</h2>
     <ol class="whys">
       <li><b>Why were duplicate invoices created?</b> The invoice-generation stage ran twice for segments 7–12, and both runs wrote draft invoices.</li>
       <li><b>Why did the stage run twice?</b> The retry wrapper re-ran the whole stage after the database failover, and the drafts already written before the failover were not recognised.</li>
       <li><b>Why were the existing drafts not recognised?</b> Invoice writes carry no idempotency key, so the re-inserted rows looked like new invoices rather than retries of the same work.</li>
       <li><b>Why was there no idempotency key?</b> The retry wrapper was added in 2025 for transient network blips; idempotent writes were noted as a follow-up (backlog item LH-731) but never scheduled.</li>
-      <li><b>Why was it never scheduled?</b> There is no engineering standard requiring retried writes to be idempotent, and LH-731 had no owner — nothing forced the gap to surface before an incident did.</li>
+      <li><b>Why was it never scheduled?</b> There is no engineering standard requiring retried writes to be idempotent, and LH-731 had no owner; nothing forced the gap to surface before an incident did.</li>
     </ol>
     <p class="root-line"><b>Root cause:</b> a stage-level retry without an idempotency key, executed across a database
-    failover — a process gap (no idempotency standard for retried writes), not an individual error.</p>
+    failover: a process gap (no idempotency standard for retried writes), not an individual error.</p>
   </section>
 
   <section class="block" aria-label="Remediation">
-    <h2>Remediation — 3 of 5 complete</h2>
+    <h2>Remediation · 3 of 5 complete</h2>
     <table class="rem">
       <thead><tr><th></th><th>Action</th><th>Owner</th><th>Due</th><th>Status</th></tr></thead>
       <tbody>
@@ -291,45 +296,41 @@
   <section class="block blameless" aria-label="Blameless note">
     <h2>Blameless note</h2>
     <p>This review examined process, not people. The retry wrapper behaved exactly as designed, the on-call response was
-    fast and careful, and the reconciliation safety net did its job — the gap was a missing standard, an unowned backlog
+    fast and careful, and the reconciliation safety net did its job; the gap was a missing standard, an unowned backlog
     item, and an alert that only ran once a day. Those are system properties, and the remediation list above fixes the
     system. No individual action contributed to this incident, and none of the follow-ups are directed at a person.</p>
   </section>
 
   <details class="made">
-    <summary>How this was made — the prompt, where it runs, and an honesty note</summary>
+    <summary>How this was made: the brief, how to reproduce it, and an honesty note</summary>
     <div class="made-body">
       <section>
-        <h3>The prompt</h3>
+        <h3>The brief</h3>
         <pre id="prompt-text">From this incident channel export and my timeline notes [paste], build a
 single-file HTML post-mortem for INC-2417: impact summary cards, a
 minute-by-minute timeline filterable by phase (detect/escalate/mitigate/
 resolve), log excerpts, a five-whys root cause chain, and a remediation
-checklist with owners and due dates. Blameless tone. One file — it
+checklist with owners and due dates. Blameless tone. One file; it
 becomes the archived incident record.</pre>
-        <button class="copy-btn" data-copy="prompt-text">Copy prompt</button>
+        <button class="copy-btn" data-copy="prompt-text">Copy brief</button>
       </section>
       <section>
-        <h3>Where this runs</h3>
-        <p>GitHub Copilot agent mode works inside your IDE: per
-        <a href="https://docs.github.com/en/copilot/get-started/features">GitHub’s feature documentation</a>, it
-        “will determine which files to make changes to, offer code changes and terminal commands for the user's approval,
-        and iterate to remediate issues until the original task is complete” — so it can produce an artifact like this
-        directly in your repository, alongside the code it describes. What Copilot may do in your organisation is governed by
-        <a href="https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-enterprise/manage-enterprise-policies">enterprise policies</a>
-        set by your admins.</p>
+        <h3>How to reproduce</h3>
+        <p>Paste the brief into any capable LLM: GPT, Claude, Gemini, Grok, DeepSeek, or the assistant your company
+        provides. Iterate a few rounds on layout and content until it reads well. Save the final answer as a
+        <code>.html</code> file and open it in any browser. Expect similar output, not identical: every model has its
+        own taste, and that is fine.</p>
       </section>
       <section>
         <h3>Honesty note</h3>
-        <p>This is a reference artifact, built with an AI coding agent (Claude Code) to illustrate the output format —
-        it was not generated by GitHub Copilot. The prompt above is what you would give Copilot to produce something
-        like it. Results vary by model, tenant configuration, and licence: treat this as a pattern, not a guaranteed output.</p>
+        <p>This reference artifact was built with Claude Code, an LLM coding agent, over several iterations. Treat it
+        as the bar to aim for, not as a guaranteed first answer. All data on this page is fictional.</p>
       </section>
     </div>
   </details>
 
   <footer class="colophon">
-    <span>Part of <a href="../index.html">“The artifact is the demo — HTML in the enterprise”</a></span>
+    <span>Part of <a href="../index.html">"The artifact is the demo: HTML in the enterprise"</a></span>
     <span>Single file · no external requests · works offline</span>
   </footer>
 
@@ -370,7 +371,7 @@ becomes the archived incident record.</pre>
       var text = el.textContent;
       function done(ok){
         var old = btn.textContent;
-        btn.textContent = ok ? 'Copied ✓' : 'Copy failed — select the text manually';
+        btn.textContent = ok ? 'Copied ✓' : 'Copy failed, select the text manually';
         setTimeout(function(){ btn.textContent = old; }, 2200);
       }
       if (navigator.clipboard && navigator.clipboard.writeText) {

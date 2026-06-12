@@ -3,16 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ADR-014 — Event streaming for order-status notifications · ABC Corp (fictional)</title>
+<title>ADR-014 · Event streaming for order-status notifications · ABC Corp (fictional)</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%2316202E'/><rect x='7' y='13' width='8' height='6' rx='2' fill='%233D5ADB'/><rect x='17' y='13' width='8' height='6' rx='2' fill='%230E7C6B'/></svg>">
 <style>
   :root{
-    /* ——— design tokens: edit these lines to re-skin the whole page ——— */
+    /* ── design tokens: edit these lines to re-skin the whole page ── */
     --ground:#F5F7FA; --panel:#FFFFFF; --ink:#16202E; --ink-soft:#4A5768;
     --line:#D6DEE8; --lens-m365:#3D5ADB; --lens-m365-tint:#EBEFFC;
     --lens-gh:#0E7C6B; --lens-gh-tint:#E6F4F1;
     --honest:#9A5B00; --honest-tint:#FFF6E8;
     --ok:#1F7A33; --ok-tint:#E7F3EA; --warn:#B05A00; --warn-tint:#FDF1E3;
     --bad:#B3261E; --bad-tint:#FBEAE9;
+    --shadow:0 1px 2px rgba(22,32,46,.05),0 4px 14px rgba(22,32,46,.04);
     --sans:system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     --mono:ui-monospace,"Cascadia Code","Segoe UI Mono",Consolas,Menlo,monospace;
   }
@@ -21,7 +23,7 @@
 
   /* ── shared artifact bar (identical convention across all demos) ── */
   .abar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:14px;
-    background:var(--panel);border-bottom:1px solid var(--line);padding:9px 20px;font-size:12.5px}
+    background:rgba(255,255,255,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);padding:9px 20px;font-size:12.5px}
   .abar .lens{display:inline-flex;align-items:center;gap:7px;font-weight:600;color:var(--lens-gh);white-space:nowrap}
   .abar .lens .dot{width:9px;height:9px;border-radius:50%;background:var(--lens-gh)}
   .abar .file{font-family:var(--mono);font-size:11.5px;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -31,19 +33,20 @@
   .abar .back:hover{color:var(--lens-gh)}
 
   .wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px}
-  h1{font-size:25px;font-weight:800;letter-spacing:-.02em;margin:0}
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--lens-gh);margin-bottom:8px}
+  h1{font-size:25px;font-weight:800;letter-spacing:-.022em;margin:0}
   .fictional-note{font-size:12.5px;color:var(--ink-soft);margin:6px 0 18px}
 
   /* ADR header */
-  .adr-head{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin-bottom:16px}
+  .adr-head{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin-bottom:16px;box-shadow:var(--shadow)}
   .adr-id{font-family:var(--mono);font-weight:700;color:var(--lens-gh);font-size:14px}
   .status-chip{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.07em;
     color:#fff;background:var(--ok);border-radius:5px;padding:3px 11px;vertical-align:2px}
-  .adr-meta{display:flex;flex-wrap:wrap;gap:6px 24px;margin-top:12px;font-size:13px;color:var(--ink-soft)}
+  .adr-meta{display:flex;flex-wrap:wrap;gap:6px 24px;margin-top:12px;font-family:var(--mono);font-size:12px;color:var(--ink-soft)}
   .adr-meta b{color:var(--ink);font-weight:600}
   .adr-meta code{font-family:var(--mono);font-size:12px;background:var(--ground);border:1px solid var(--line);border-radius:4px;padding:1px 6px}
 
-  section.block{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin-bottom:16px}
+  section.block{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin-bottom:16px;box-shadow:var(--shadow)}
   section.block h2{font-size:13px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 14px}
   section.block p{margin:0 0 10px}
   section.block p:last-child{margin-bottom:0}
@@ -63,7 +66,7 @@
   table.crit th{text-align:left;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-soft);
     border-bottom:1px solid var(--line);padding:6px 10px 6px 0}
   table.crit th.opt-col{text-align:center}
-  table.crit td{border-bottom:1px solid var(--line);padding:9px 10px 9px 0;vertical-align:middle}
+  table.crit td{border-bottom:1px solid var(--line);padding:11px 10px 11px 0;vertical-align:middle}
   table.crit td.score{text-align:center}
   table.crit tr:last-child td{border-bottom:none}
   table.crit tr.total td{font-weight:800;border-top:2px solid var(--ink);font-size:14px}
@@ -99,13 +102,13 @@
 
   /* decision log */
   table.dlog{width:100%;border-collapse:collapse;font-size:13.5px}
-  table.dlog td{border-bottom:1px solid var(--line);padding:8px 10px 8px 0}
+  table.dlog td{border-bottom:1px solid var(--line);padding:10px 10px 10px 0}
   table.dlog tr:last-child td{border-bottom:none}
   table.dlog td:first-child{font-weight:700;width:140px}
   table.dlog td:last-child{font-family:var(--mono);font-size:12px;color:var(--ink-soft);text-align:right;white-space:nowrap}
 
   /* ── shared "How this was made" panel (identical convention across all demos) ── */
-  details.made{margin-top:34px;border:1px solid var(--honest);border-radius:10px;background:var(--honest-tint);overflow:hidden}
+  details.made{margin-top:34px;border:1px solid var(--honest);border-radius:12px;background:var(--honest-tint);overflow:hidden}
   details.made summary{cursor:pointer;padding:13px 18px;font-weight:700;font-size:14px;color:var(--honest);list-style:none}
   details.made summary::-webkit-details-marker{display:none}
   details.made summary::before{content:"▸ ";font-family:var(--mono)}
@@ -127,15 +130,15 @@
     body{background:#fff;font-size:12px}
     .abar,details.made,footer.colophon,.dia-toggle{display:none}
     .wrap{max-width:none;padding:0}
-    section.block,.adr-head{border:1px solid #bbb;break-inside:avoid;margin-bottom:10px}
+    section.block,.adr-head{border:1px solid #bbb;break-inside:avoid;margin-bottom:10px;box-shadow:none}
   }
 </style>
 </head>
 <body>
 
 <header class="abar">
-  <span class="lens"><span class="dot"></span>GitHub Copilot · engineering lens</span>
-  <span class="file">demos/gh-08-adr.html</span>
+  <span class="lens"><span class="dot"></span>Engineering lens</span>
+  <span class="file">demos/eng-08-adr.html</span>
   <span class="badge">Fictional data</span>
   <a class="back" href="../index.html">← all artifacts</a>
 </header>
@@ -143,14 +146,16 @@
 <div class="wrap">
 
   <div class="adr-head">
+    <div class="eyebrow">Architecture decision record · order-gateway</div>
     <div><span class="adr-id">ADR-014</span> &nbsp; <span class="status-chip">ACCEPTED</span></div>
     <h1 style="margin-top:6px">Event streaming for order-status notifications</h1>
-    <p class="fictional-note">ABC Corp — a fictional company. Every name, number, and date on this page is invented for demonstration.</p>
+    <p class="fictional-note">ABC Corp is a fictional company. Every name, number and date is invented.
+    This is a reference artifact generated with an LLM coding agent; the brief that produces it is at the bottom of this page.</p>
     <div class="adr-meta">
       <span>Team <b>order-gateway</b></span>
       <span>Accepted <b>5 Jun 2026</b></span>
       <span>Deciders <b>R. Okafor, A. Kowalczyk, S. de Wit, P. Mehta</b></span>
-      <span>Supersedes <code>ADR-009 — Shared read replica for consumer polling</code></span>
+      <span>Supersedes <code>ADR-009: Shared read replica for consumer polling</code></span>
       <span>Programme <b>Project Lighthouse</b></span>
     </div>
   </div>
@@ -160,7 +165,7 @@
     <p>Six downstream consumers (customer portal, mobile push, e-mail dispatch, CRM sync, warehouse ops, analytics)
     currently learn about order-status changes by polling the <code>orders</code> database through the read replica
     introduced in ADR-009. Polling now accounts for roughly 38% of read load on the replica, and because the consumers
-    poll on a 15-minute cycle, customers see status updates up to 15 minutes late — the single biggest source of
+    poll on a 15-minute cycle, customers see status updates up to 15 minutes late, the single biggest source of
     "where is my order" contact-centre tickets in the Lighthouse baseline study (≈ €210k/yr handling cost, fictional figure).
     Two more consumers are planned for Q4 2026. The polling pattern does not scale and couples every consumer to the
     orders schema; a schema migration in May required coordinated changes in five consumer teams.</p>
@@ -175,7 +180,7 @@
         and placement; we operate brokers, upgrades, and on-call ourselves.</p>
       </div>
       <div class="opt chosen">
-        <h3><span class="tag">OPTION B — CHOSEN</span> · Managed streaming service</h3>
+        <h3><span class="tag">OPTION B · CHOSEN</span> · Managed streaming service</h3>
         <p>Use the cloud provider's managed event-streaming service (Kafka-compatible API) in our EU region.
         Provider operates brokers; we own topics, schemas, and access control.</p>
       </div>
@@ -188,7 +193,7 @@
   </section>
 
   <section class="block" aria-label="Criteria comparison">
-    <h2>Criteria comparison <span style="font-weight:400;text-transform:none;letter-spacing:0">— 1–5 dots, higher is better · weighted totals</span></h2>
+    <h2>Criteria comparison <span style="font-weight:400;text-transform:none;letter-spacing:0">· 1–5 dots, higher is better · weighted totals</span></h2>
     <table class="crit">
       <thead>
         <tr><th>Criterion <span class="wt">(weight)</span></th><th class="opt-col">A · Self-managed Kafka</th><th class="opt-col">B · Managed streaming</th><th class="opt-col">C · Extend queue</th></tr>
@@ -242,11 +247,11 @@
 
   <section class="block decision" aria-label="Decision">
     <h2>Decision</h2>
-    <p class="pick">We will adopt Option B — the managed event-streaming service — for order-status notifications.</p>
+    <p class="pick">We will adopt Option B, the managed event-streaming service, for order-status notifications.</p>
     <p>It scores highest on the criteria that drove this ADR: it removes the 15-minute polling latency and the replica
     load without making the order-gateway team a broker-operations team, which Option A would require and which the
     team's on-call capacity cannot absorb before the Q4 consumer onboarding. Option C is cheapest today but fails the
-    latency and replay requirements — consumers that miss messages would be back to polling for reconciliation, which
+    latency and replay requirements: consumers that miss messages would be back to polling for reconciliation, which
     recreates the problem we are solving. The Kafka-compatible API keeps exit risk acceptable: producers and consumers
     are written against the open protocol, so a later move to self-managed (Option A) remains a configuration change,
     not a rewrite. EU region pinning satisfies the residency requirement recorded in the Lighthouse data-handling
@@ -258,16 +263,16 @@
     <ul class="cons">
       <li class="pos"><span class="ctag pos">POSITIVE</span><span>Order-status latency drops from up to 15 minutes to sub-second; the two Q4 consumers subscribe to a topic instead of joining a schema-coordination round.</span></li>
       <li class="pos"><span class="ctag pos">POSITIVE</span><span>≈ 38% of read load leaves the orders read replica; ADR-009's replica can be downsized in Q1 2027.</span></li>
-      <li class="pos"><span class="ctag pos">POSITIVE</span><span>Consumers decouple from the orders schema — events carry a versioned contract owned by order-gateway.</span></li>
+      <li class="pos"><span class="ctag pos">POSITIVE</span><span>Consumers decouple from the orders schema: events carry a versioned contract owned by order-gateway.</span></li>
       <li class="neg"><span class="ctag neg">NEGATIVE</span><span>New external dependency with usage-based cost (≈ €120k/yr, fictional estimate); budget owner must review quarterly.</span></li>
-      <li class="neg"><span class="ctag neg">NEGATIVE</span><span>Consumers must implement idempotent, at-least-once handling — a real behaviour change for the CRM sync and e-mail dispatch teams.</span></li>
+      <li class="neg"><span class="ctag neg">NEGATIVE</span><span>Consumers must implement idempotent, at-least-once handling, a real behaviour change for the CRM sync and e-mail dispatch teams.</span></li>
       <li class="neu"><span class="ctag neu">NEUTRAL</span><span>The existing task queue stays for point-to-point work; this ADR covers status notifications only.</span></li>
       <li class="neu"><span class="ctag neu">NEUTRAL</span><span>Schema registry and topic-naming conventions to be defined in a follow-up ADR before the first consumer migrates.</span></li>
     </ul>
   </section>
 
   <section class="block" aria-label="Architecture diagram">
-    <h2>Architecture — current vs target</h2>
+    <h2>Architecture: current vs target</h2>
     <div class="dia-toggle" role="group" aria-label="Toggle between current state and target state diagram">
       <button id="btn-current" aria-pressed="true">Current state</button>
       <button id="btn-target" aria-pressed="false">Target state</button>
@@ -366,46 +371,42 @@
     <h2>Decision log</h2>
     <table class="dlog">
       <tbody>
-        <tr><td>Proposed by</td><td>R. Okafor (order-gateway tech lead) — draft circulated to consumer teams</td><td>18 May 2026</td></tr>
-        <tr><td>Reviewed by</td><td>A. Kowalczyk (platform), S. de Wit (data &amp; residency) — architecture guild session, comments resolved in <code style="font-family:var(--mono);font-size:12px">order-gateway#391</code></td><td>27 May 2026</td></tr>
-        <tr><td>Accepted by</td><td>P. Mehta (head of engineering) — ADR-009 marked superseded the same day</td><td>5 Jun 2026</td></tr>
+        <tr><td>Proposed by</td><td>R. Okafor (order-gateway tech lead) · draft circulated to consumer teams</td><td>18 May 2026</td></tr>
+        <tr><td>Reviewed by</td><td>A. Kowalczyk (platform), S. de Wit (data &amp; residency) · architecture guild session, comments resolved in <code style="font-family:var(--mono);font-size:12px">order-gateway#391</code></td><td>27 May 2026</td></tr>
+        <tr><td>Accepted by</td><td>P. Mehta (head of engineering) · ADR-009 marked superseded the same day</td><td>5 Jun 2026</td></tr>
       </tbody>
     </table>
   </section>
 
   <details class="made">
-    <summary>How this was made — the prompt, where it runs, and an honesty note</summary>
+    <summary>How this was made: the brief, how to reproduce it, and an honesty note</summary>
     <div class="made-body">
       <section>
-        <h3>The prompt</h3>
+        <h3>The brief</h3>
         <pre id="prompt-text">Create ADR-014 'Event streaming for order-status notifications' as one
 HTML file: context, three options with a weighted criteria table, the
 decision and rationale, consequences (positive/negative/neutral), and an
 inline SVG diagram with a current-state/target-state toggle. It will live
 in the repo next to the code, so one self-contained file, no images.</pre>
-        <button class="copy-btn" data-copy="prompt-text">Copy prompt</button>
+        <button class="copy-btn" data-copy="prompt-text">Copy brief</button>
       </section>
       <section>
-        <h3>Where this runs</h3>
-        <p>GitHub Copilot agent mode works inside your IDE: per
-        <a href="https://docs.github.com/en/copilot/get-started/features">GitHub’s feature documentation</a>, it
-        “will determine which files to make changes to, offer code changes and terminal commands for the user's approval,
-        and iterate to remediate issues until the original task is complete” — so it can produce an artifact like this
-        directly in your repository, alongside the code it describes. What Copilot may do in your organisation is governed by
-        <a href="https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-enterprise/manage-enterprise-policies">enterprise policies</a>
-        set by your admins.</p>
+        <h3>How to reproduce</h3>
+        <p>Paste the brief into any capable LLM: GPT, Claude, Gemini, Grok, DeepSeek, or the assistant your company
+        provides. Iterate a few rounds on layout and content until it reads well. Save the final answer as a
+        <code>.html</code> file and open it in any browser. Expect similar output, not identical: every model has its
+        own taste, and that is fine.</p>
       </section>
       <section>
         <h3>Honesty note</h3>
-        <p>This is a reference artifact, built with an AI coding agent (Claude Code) to illustrate the output format —
-        it was not generated by GitHub Copilot. The prompt above is what you would give Copilot to produce something
-        like it. Results vary by model, tenant configuration, and licence: treat this as a pattern, not a guaranteed output.</p>
+        <p>This reference artifact was built with Claude Code, an LLM coding agent, over several iterations. Treat it
+        as the bar to aim for, not as a guaranteed first answer. All data on this page is fictional.</p>
       </section>
     </div>
   </details>
 
   <footer class="colophon">
-    <span>Part of <a href="../index.html">“The artifact is the demo — HTML in the enterprise”</a></span>
+    <span>Part of <a href="../index.html">"The artifact is the demo: HTML in the enterprise"</a></span>
     <span>Single file · no external requests · works offline</span>
   </footer>
 
@@ -439,7 +440,7 @@ in the repo next to the code, so one self-contained file, no images.</pre>
       var text = el.textContent;
       function done(ok){
         var old = btn.textContent;
-        btn.textContent = ok ? 'Copied ✓' : 'Copy failed — select the text manually';
+        btn.textContent = ok ? 'Copied ✓' : 'Copy failed, select the text manually';
         setTimeout(function(){ btn.textContent = old; }, 2200);
       }
       if (navigator.clipboard && navigator.clipboard.writeText) {

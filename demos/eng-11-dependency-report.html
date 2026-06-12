@@ -3,16 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dependency risk &amp; upgrade report — order-gateway Q2 2026 · ABC Corp (fictional)</title>
+<title>Dependency risk &amp; upgrade report: order-gateway Q2 2026 · ABC Corp (fictional)</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%2316202E'/><rect x='7' y='13' width='8' height='6' rx='2' fill='%233D5ADB'/><rect x='17' y='13' width='8' height='6' rx='2' fill='%230E7C6B'/></svg>">
 <style>
   :root{
-    /* ——— design tokens: edit these lines to re-skin the whole page ——— */
+    /* ── design tokens: edit these lines to re-skin the whole page ── */
     --ground:#F5F7FA; --panel:#FFFFFF; --ink:#16202E; --ink-soft:#4A5768;
     --line:#D6DEE8; --lens-m365:#3D5ADB; --lens-m365-tint:#EBEFFC;
     --lens-gh:#0E7C6B; --lens-gh-tint:#E6F4F1;
     --honest:#9A5B00; --honest-tint:#FFF6E8;
     --ok:#1F7A33; --ok-tint:#E7F3EA; --warn:#B05A00; --warn-tint:#FDF1E3;
     --bad:#B3261E; --bad-tint:#FBEAE9;
+    --shadow:0 1px 2px rgba(22,32,46,.05),0 4px 14px rgba(22,32,46,.04);
     --sans:system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     --mono:ui-monospace,"Cascadia Code","Segoe UI Mono",Consolas,Menlo,monospace;
   }
@@ -21,7 +23,7 @@
 
   /* ── shared artifact bar (identical convention across all demos) ── */
   .abar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:14px;
-    background:var(--panel);border-bottom:1px solid var(--line);padding:9px 20px;font-size:12.5px}
+    background:rgba(255,255,255,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);padding:9px 20px;font-size:12.5px}
   .abar .lens{display:inline-flex;align-items:center;gap:7px;font-weight:600;color:var(--lens-gh);white-space:nowrap}
   .abar .lens .dot{width:9px;height:9px;border-radius:50%;background:var(--lens-gh)}
   .abar .file{font-family:var(--mono);font-size:11.5px;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -30,23 +32,24 @@
   .abar .back{margin-left:auto;color:var(--ink);text-decoration:none;font-weight:600;white-space:nowrap}
   .abar .back:hover{color:var(--lens-gh)}
 
-  .wrap{max-width:980px;margin:0 auto;padding:28px 20px 80px}
+  .wrap{max-width:980px;margin:0 auto;padding:30px 20px 80px}
 
-  .rep-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 18px;margin-bottom:6px}
-  h1{font-size:26px;font-weight:800;letter-spacing:-.02em;margin:0}
+  /* ── report header ── */
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--lens-gh);margin-bottom:8px}
+  h1{font-size:28px;font-weight:800;letter-spacing:-.022em;margin:0 0 4px}
   .rep-meta{font-family:var(--mono);font-size:12px;color:var(--ink-soft)}
-  .fictional-note{font-size:12.5px;color:var(--ink-soft);margin:0 0 18px}
+  .fictional-note{font-size:12.5px;color:var(--ink-soft);margin:8px 0 20px;max-width:78ch}
 
   /* summary strip */
   .sumstrip{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}
-  .sumstrip .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+  .sumstrip .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
   .sumstrip .num{font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
   .sumstrip .lbl{font-size:12px;color:var(--ink-soft);margin-top:3px}
   .sumstrip .card.accent .num{color:var(--lens-gh)}
   .sumstrip .card.adv .num{color:var(--warn)}
   .sumstrip .card.lic .num{color:var(--bad)}
 
-  section.block{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin-bottom:16px}
+  section.block{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:16px;box-shadow:var(--shadow)}
   section.block h2{font-size:13px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 14px}
 
   /* filter bar */
@@ -67,7 +70,7 @@
   table.deps th button:hover{color:var(--lens-gh)}
   table.deps th button:focus-visible{outline:2px solid var(--lens-gh);outline-offset:2px;border-radius:3px}
   table.deps th .arrow{font-size:10px;width:10px;display:inline-block;color:var(--lens-gh)}
-  table.deps td{border-bottom:1px solid var(--line);padding:9px 12px 9px 0;vertical-align:top}
+  table.deps td{border-bottom:1px solid var(--line);padding:10px 12px 10px 0;vertical-align:top}
   table.deps tbody tr:last-child td{border-bottom:none}
   .pkg{font-family:var(--mono);font-size:12.5px;font-weight:600}
   .ver{font-family:var(--mono);font-size:12px;white-space:nowrap}
@@ -100,7 +103,7 @@
   .chain-note{font-size:13px;color:var(--ink-soft);margin:0 0 10px}
 
   /* ── shared "How this was made" panel (identical convention across all demos) ── */
-  details.made{margin-top:34px;border:1px solid var(--honest);border-radius:10px;background:var(--honest-tint);overflow:hidden}
+  details.made{margin-top:34px;border:1px solid var(--honest);border-radius:12px;background:var(--honest-tint);overflow:hidden}
   details.made summary{cursor:pointer;padding:13px 18px;font-weight:700;font-size:14px;color:var(--honest);list-style:none}
   details.made summary::-webkit-details-marker{display:none}
   details.made summary::before{content:"▸ ";font-family:var(--mono)}
@@ -110,7 +113,6 @@
   .made-body pre{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px;font-family:var(--mono);
     font-size:12.5px;line-height:1.6;white-space:pre-wrap;margin:0;color:var(--ink)}
   .made-body p{margin:0;font-size:13.5px;color:var(--ink)}
-  .made-body a{color:var(--lens-gh)}
   .copy-btn{margin-top:8px;font:600 12.5px var(--sans);color:var(--panel);background:var(--ink);border:none;border-radius:6px;
     padding:7px 14px;cursor:pointer}
   .copy-btn:hover{background:var(--lens-gh)}
@@ -123,36 +125,36 @@
     body{background:#fff;font-size:11px}
     .abar,details.made,footer.colophon,.filterbar{display:none}
     .wrap{max-width:none;padding:0}
-    section.block{border:1px solid #bbb;break-inside:avoid;margin-bottom:8px;padding:10px 12px}
+    section.block,.sumstrip .card{border:1px solid #bbb;break-inside:avoid;margin-bottom:8px;padding:10px 12px;box-shadow:none}
   }
 </style>
 </head>
 <body>
 
 <header class="abar">
-  <span class="lens"><span class="dot"></span>GitHub Copilot · engineering lens</span>
-  <span class="file">demos/gh-11-dependency-report.html</span>
+  <span class="lens"><span class="dot"></span>Engineering lens</span>
+  <span class="file">demos/eng-11-dependency-report.html</span>
   <span class="badge">Fictional data</span>
   <a class="back" href="../index.html">← all artifacts</a>
 </header>
 
 <div class="wrap">
 
-  <div class="rep-head">
-    <h1>Dependency risk &amp; upgrade report — order-gateway</h1>
-    <span class="rep-meta">quarterly review · Q2 2026 · Java service · Project Lighthouse · scan of 09 Jun 2026</span>
-  </div>
-  <p class="fictional-note">ABC Corp — a fictional company. Every package name, version, and advisory ID on this page is invented for demonstration — none refers to a real library or a real vulnerability.</p>
+  <div class="eyebrow">Dependency review · order-gateway · Q2 2026</div>
+  <h1>Dependency risk &amp; upgrade report: order-gateway</h1>
+  <div class="rep-meta">quarterly review · Q2 2026 · Java service · Project Lighthouse · scan of 09 Jun 2026</div>
+  <p class="fictional-note">ABC Corp is a fictional company. Every name, number and date is invented.
+  This is a reference artifact generated with an LLM coding agent; the brief that produces it is at the bottom of this page.</p>
 
   <div class="sumstrip" role="group" aria-label="Scan summary">
     <div class="card accent"><div class="num">28</div><div class="lbl">dependencies scanned</div></div>
     <div class="card adv"><div class="num">3</div><div class="lbl">with open advisories (fictional)</div></div>
-    <div class="card lic"><div class="num">1</div><div class="lbl">licence flag — legal review</div></div>
+    <div class="card lic"><div class="num">1</div><div class="lbl">licence flag · legal review</div></div>
     <div class="card accent"><div class="num">6</div><div class="lbl">recommended upgrades this quarter</div></div>
   </div>
 
   <section class="block" aria-label="Dependency table">
-    <h2>Top 12 by blast radius — click a column header to sort</h2>
+    <h2>Top 12 by blast radius · click a column header to sort</h2>
     <div class="filterbar" role="group" aria-label="Severity filter">
       <span class="flabel">Show:</span>
       <button class="fbtn" data-filter="all" aria-pressed="true">All</button>
@@ -175,84 +177,84 @@
         <tr data-pkg="corelib-httpclient" data-adv="2" data-blast="3" data-lic="ok">
           <td><span class="pkg">corelib-httpclient</span></td>
           <td><span class="ver">4.2.9 <span class="to">→</span> <span class="new">5.1.0</span></span></td>
-          <td class="adv-cell"><span class="adv-id" title="ADV-2026-0042 (fictional advisory) — header parsing flaw, fixed in 5.x">ADV-2026-0042</span><span class="adv-id" title="ADV-2026-0057 (fictional advisory) — connection reuse issue, fixed in 5.1">ADV-2026-0057</span></td>
+          <td class="adv-cell"><span class="adv-id" title="ADV-2026-0042 (fictional advisory): header parsing flaw, fixed in 5.x">ADV-2026-0042</span><span class="adv-id" title="ADV-2026-0057 (fictional advisory): connection reuse issue, fixed in 5.1">ADV-2026-0057</span></td>
           <td><span class="lic">Permissive</span></td>
           <td><span class="chip high">HIGH · 14 modules</span></td>
         </tr>
         <tr data-pkg="fastjson-parser" data-adv="1" data-blast="3" data-lic="ok">
           <td><span class="pkg">fastjson-parser</span></td>
           <td><span class="ver">2.8.1 <span class="to">→</span> <span class="new">3.0.4</span></span></td>
-          <td class="adv-cell"><span class="adv-id" title="ADV-2026-0061 (fictional advisory) — deep-nesting resource exhaustion, fixed in 3.0">ADV-2026-0061</span></td>
+          <td class="adv-cell"><span class="adv-id" title="ADV-2026-0061 (fictional advisory): deep-nesting resource exhaustion, fixed in 3.0">ADV-2026-0061</span></td>
           <td><span class="lic">Permissive</span></td>
           <td><span class="chip high">HIGH · 11 modules</span></td>
         </tr>
         <tr data-pkg="yaml-config-lite" data-adv="1" data-blast="2" data-lic="ok">
           <td><span class="pkg">yaml-config-lite</span></td>
           <td><span class="ver">1.4.0 <span class="to">→</span> <span class="new">1.6.2</span></span></td>
-          <td class="adv-cell"><span class="adv-id" title="ADV-2026-0049 (fictional advisory) — unsafe anchor expansion, fixed in 1.5">ADV-2026-0049</span></td>
+          <td class="adv-cell"><span class="adv-id" title="ADV-2026-0049 (fictional advisory): unsafe anchor expansion, fixed in 1.5">ADV-2026-0049</span></td>
           <td><span class="lic">Permissive</span></td>
           <td><span class="chip med">MED · 6 modules</span></td>
         </tr>
         <tr data-pkg="pdfforge-lite" data-adv="0" data-blast="1" data-lic="flag">
           <td><span class="pkg">pdfforge-lite</span></td>
           <td><span class="ver">0.9.4 <span class="to">→</span> <span class="new">1.2.0</span></span></td>
-          <td class="adv-cell"><span class="none">—</span></td>
-          <td><span class="chip lic-flag" title="Licence changed in 1.x — flagged for legal review (fictional scenario)">strong copyleft — legal review</span></td>
+          <td class="adv-cell"><span class="none">none</span></td>
+          <td><span class="chip lic-flag" title="Licence changed in 1.x: flagged for legal review (fictional scenario)">strong copyleft · legal review</span></td>
           <td><span class="chip low">LOW · 1 module</span></td>
         </tr>
         <tr data-pkg="quartzite-scheduler" data-adv="0" data-blast="3" data-lic="ok">
           <td><span class="pkg">quartzite-scheduler</span></td>
           <td><span class="ver">3.3.7 <span class="to">→</span> <span class="new">4.0.1</span></span></td>
-          <td class="adv-cell"><span class="none">—</span></td>
+          <td class="adv-cell"><span class="none">none</span></td>
           <td><span class="lic">Permissive</span></td>
           <td><span class="chip high">HIGH · 9 modules</span></td>
         </tr>
         <tr data-pkg="sqlbridge-pool" data-adv="0" data-blast="2" data-lic="ok">
           <td><span class="pkg">sqlbridge-pool</span></td>
           <td><span class="ver">5.0.2 <span class="to">→</span> <span class="new">5.4.0</span></span></td>
-          <td class="adv-cell"><span class="none">—</span></td>
+          <td class="adv-cell"><span class="none">none</span></td>
           <td><span class="lic">Permissive</span></td>
           <td><span class="chip med">MED · 7 modules</span></td>
         </tr>
         <tr data-pkg="authtoken-kit" data-adv="0" data-blast="2" data-lic="ok">
           <td><span class="pkg">authtoken-kit</span></td>
           <td><span class="ver">2.1.3 <span class="to">→</span> <span class="new">2.3.0</span></span></td>
-          <td class="adv-cell"><span class="none">—</span></td>
+          <td class="adv-cell"><span class="none">none</span></td>
           <td><span class="lic">Permissive</span></td>
           <td><span class="chip med">MED · 5 modules</span></td>
         </tr>
         <tr data-pkg="metrica-collector" data-adv="0" data-blast="2" data-lic="ok">
           <td><span class="pkg">metrica-collector</span></td>
           <td><span class="ver">1.9.0 <span class="to">→</span> <span class="new">2.1.1</span></span></td>
-          <td class="adv-cell"><span class="none">—</span></td>
+          <td class="adv-cell"><span class="none">none</span></td>
           <td><span class="lic">Permissive</span></td>
           <td><span class="chip med">MED · 5 modules</span></td>
         </tr>
         <tr data-pkg="retryflow" data-adv="0" data-blast="1" data-lic="ok">
           <td><span class="pkg">retryflow</span></td>
           <td><span class="ver">0.7.2 <span class="to">→</span> <span class="new">0.8.0</span></span></td>
-          <td class="adv-cell"><span class="none">—</span></td>
+          <td class="adv-cell"><span class="none">none</span></td>
           <td><span class="lic">Permissive</span></td>
           <td><span class="chip low">LOW · 3 modules</span></td>
         </tr>
         <tr data-pkg="tracelog-appender" data-adv="0" data-blast="1" data-lic="ok">
           <td><span class="pkg">tracelog-appender</span></td>
           <td><span class="ver">2.2.0 <span class="to">→</span> <span class="new">2.2.5</span></span></td>
-          <td class="adv-cell"><span class="none">—</span></td>
+          <td class="adv-cell"><span class="none">none</span></td>
           <td><span class="lic">Permissive</span></td>
           <td><span class="chip low">LOW · 3 modules</span></td>
         </tr>
         <tr data-pkg="csvstream-io" data-adv="0" data-blast="1" data-lic="ok">
           <td><span class="pkg">csvstream-io</span></td>
           <td><span class="ver">1.1.8 <span class="to">→</span> <span class="new">1.2.0</span></span></td>
-          <td class="adv-cell"><span class="none">—</span></td>
+          <td class="adv-cell"><span class="none">none</span></td>
           <td><span class="lic">Permissive</span></td>
           <td><span class="chip low">LOW · 2 modules</span></td>
         </tr>
         <tr data-pkg="xmlbind-runtime" data-adv="0" data-blast="1" data-lic="ok">
           <td><span class="pkg">xmlbind-runtime</span></td>
           <td><span class="ver">3.0.1 <span class="to">→</span> <span class="new">3.0.6</span></span></td>
-          <td class="adv-cell"><span class="none">—</span></td>
+          <td class="adv-cell"><span class="none">none</span></td>
           <td><span class="lic">Permissive</span></td>
           <td><span class="chip low">LOW · 2 modules</span></td>
         </tr>
@@ -262,20 +264,20 @@
   </section>
 
   <section class="block" aria-label="Recommended upgrade order">
-    <h2>Recommended upgrade order — 6 steps this quarter</h2>
+    <h2>Recommended upgrade order · 6 steps this quarter</h2>
     <ol class="plan">
       <li><span class="pname">corelib-httpclient</span> 4.2.9 → 5.1.0 <span class="effort L">L</span>
         <span class="why">Two open advisories and the widest blast radius (14 modules); three other libraries pin its 4.x API transitively, so everything downstream waits on this.</span></li>
       <li><span class="pname">retryflow</span> 0.7.2 → 0.8.0 <span class="effort S">S</span>
-        <span class="why">0.8 is the first release built against corelib-httpclient 5.x — a one-line bump once step 1 lands.</span></li>
+        <span class="why">0.8 is the first release built against corelib-httpclient 5.x: a one-line bump once step 1 lands.</span></li>
       <li><span class="pname">authtoken-kit</span> 2.1.3 → 2.3.0 <span class="effort M">M</span>
         <span class="why">2.3 drops the 4.x client shim; upgrading before step 1 would force a temporary compatibility layer we would throw away.</span></li>
       <li><span class="pname">fastjson-parser</span> 2.8.1 → 3.0.4 <span class="effort M">M</span>
-        <span class="why">Closes ADV-2026-0061 (fictional advisory); 3.x renames the streaming API — 11 call sites, mechanical but must be reviewed.</span></li>
+        <span class="why">Closes ADV-2026-0061 (fictional advisory); 3.x renames the streaming API, touching 11 call sites, mechanical but must be reviewed.</span></li>
       <li><span class="pname">yaml-config-lite</span> 1.4.0 → 1.6.2 <span class="effort S">S</span>
         <span class="why">Closes ADV-2026-0049 (fictional advisory); config loading is behind one wrapper class, so the surface is small.</span></li>
       <li><span class="pname">pdfforge-lite</span> 0.9.4 → 1.2.0 <em>or replace</em> <span class="effort M">M</span>
-        <span class="why">The 1.x licence change is flagged strong copyleft — hold the upgrade until legal review concludes; evaluate a permissive alternative in parallel.</span></li>
+        <span class="why">The 1.x licence change is flagged strong copyleft: hold the upgrade until legal review concludes; evaluate a permissive alternative in parallel.</span></li>
     </ol>
   </section>
 
@@ -291,7 +293,7 @@
       <!-- box 1: corelib-httpclient -->
       <rect x="14" y="45" width="190" height="58" rx="9" fill="var(--lens-gh-tint)" stroke="var(--lens-gh)" stroke-width="2"/>
       <text x="109" y="70" font-size="13" font-weight="700" text-anchor="middle" fill="var(--ink)" font-family="var(--mono)">corelib-httpclient</text>
-      <text x="109" y="89" font-size="11" text-anchor="middle" fill="var(--lens-gh)">step 1 — unblocks the rest</text>
+      <text x="109" y="89" font-size="11" text-anchor="middle" fill="var(--lens-gh)">step 1 · unblocks the rest</text>
       <!-- box 2: retryflow -->
       <rect x="262" y="10" width="160" height="52" rx="9" fill="var(--panel)" stroke="var(--line)" stroke-width="2"/>
       <text x="342" y="32" font-size="12.5" font-weight="700" text-anchor="middle" fill="var(--ink)" font-family="var(--mono)">retryflow</text>
@@ -317,39 +319,35 @@
   </section>
 
   <details class="made">
-    <summary>How this was made — the prompt, where it runs, and an honesty note</summary>
+    <summary>How this was made: the brief, how to reproduce it, and an honesty note</summary>
     <div class="made-body">
       <section>
-        <h3>The prompt</h3>
+        <h3>The brief</h3>
         <pre id="prompt-text">From this dependency scan output [paste], produce a single-file HTML
 quarterly dependency review for order-gateway: a sortable table
 (package, current, latest, advisories, licence, blast radius),
 filters, licence flags, and a recommended upgrade order with
 reasoning and a small diagram of why the order matters. No external
-requests — it must open inside the secure zone.</pre>
-        <button class="copy-btn" data-copy="prompt-text">Copy prompt</button>
+requests: it must open inside the secure zone.</pre>
+        <button class="copy-btn" data-copy="prompt-text">Copy brief</button>
       </section>
       <section>
-        <h3>Where this runs</h3>
-        <p>GitHub Copilot agent mode works inside your IDE: per
-        <a href="https://docs.github.com/en/copilot/get-started/features">GitHub’s feature documentation</a>, it
-        “will determine which files to make changes to, offer code changes and terminal commands for the user's approval,
-        and iterate to remediate issues until the original task is complete” — so it can produce an artifact like this
-        directly in your repository, alongside the code it describes. What Copilot may do in your organisation is governed by
-        <a href="https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-enterprise/manage-enterprise-policies">enterprise policies</a>
-        set by your admins.</p>
+        <h3>How to reproduce</h3>
+        <p>Paste the brief into any capable LLM: GPT, Claude, Gemini, Grok, DeepSeek, or the assistant your company
+        provides. Iterate a few rounds on layout and content until it reads well. Save the final answer as a
+        <code>.html</code> file and open it in any browser. Expect similar output, not identical: every model has its
+        own taste, and that is fine.</p>
       </section>
       <section>
         <h3>Honesty note</h3>
-        <p>This is a reference artifact, built with an AI coding agent (Claude Code) to illustrate the output format —
-        it was not generated by GitHub Copilot. The prompt above is what you would give Copilot to produce something
-        like it. Results vary by model, tenant configuration, and licence: treat this as a pattern, not a guaranteed output.</p>
+        <p>This reference artifact was built with Claude Code, an LLM coding agent, over several iterations. Treat it
+        as the bar to aim for, not as a guaranteed first answer. All data on this page is fictional.</p>
       </section>
     </div>
   </details>
 
   <footer class="colophon">
-    <span>Part of <a href="../index.html">“The artifact is the demo — HTML in the enterprise”</a></span>
+    <span>Part of <a href="../index.html">"The artifact is the demo: HTML in the enterprise"</a></span>
     <span>Single file · no external requests · works offline</span>
   </footer>
 
@@ -363,7 +361,7 @@ requests — it must open inside the secure zone.</pre>
       var text = el.textContent;
       function done(ok){
         var old = btn.textContent;
-        btn.textContent = ok ? 'Copied ✓' : 'Copy failed — select the text manually';
+        btn.textContent = ok ? 'Copied ✓' : 'Copy failed, select the text manually';
         setTimeout(function(){ btn.textContent = old; }, 2200);
       }
       if (navigator.clipboard && navigator.clipboard.writeText) {

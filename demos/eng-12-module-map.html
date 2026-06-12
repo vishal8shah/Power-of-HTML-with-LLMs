@@ -3,16 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Legacy module map — batch-billing · ABC Corp (fictional)</title>
+<title>Legacy module map: batch-billing · ABC Corp (fictional)</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%2316202E'/><rect x='7' y='13' width='8' height='6' rx='2' fill='%233D5ADB'/><rect x='17' y='13' width='8' height='6' rx='2' fill='%230E7C6B'/></svg>">
 <style>
   :root{
-    /* ——— design tokens: edit these lines to re-skin the whole page ——— */
+    /* ── design tokens: edit these lines to re-skin the whole page ── */
     --ground:#F5F7FA; --panel:#FFFFFF; --ink:#16202E; --ink-soft:#4A5768;
     --line:#D6DEE8; --lens-m365:#3D5ADB; --lens-m365-tint:#EBEFFC;
     --lens-gh:#0E7C6B; --lens-gh-tint:#E6F4F1;
     --honest:#9A5B00; --honest-tint:#FFF6E8;
     --ok:#1F7A33; --ok-tint:#E7F3EA; --warn:#B05A00; --warn-tint:#FDF1E3;
     --bad:#B3261E; --bad-tint:#FBEAE9;
+    --shadow:0 1px 2px rgba(22,32,46,.05),0 4px 14px rgba(22,32,46,.04);
     --sans:system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     --mono:ui-monospace,"Cascadia Code","Segoe UI Mono",Consolas,Menlo,monospace;
   }
@@ -21,7 +23,7 @@
 
   /* ── shared artifact bar (identical convention across all demos) ── */
   .abar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:14px;
-    background:var(--panel);border-bottom:1px solid var(--line);padding:9px 20px;font-size:12.5px}
+    background:rgba(255,255,255,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);padding:9px 20px;font-size:12.5px}
   .abar .lens{display:inline-flex;align-items:center;gap:7px;font-weight:600;color:var(--lens-gh);white-space:nowrap}
   .abar .lens .dot{width:9px;height:9px;border-radius:50%;background:var(--lens-gh)}
   .abar .file{font-family:var(--mono);font-size:11.5px;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -30,14 +32,15 @@
   .abar .back{margin-left:auto;color:var(--ink);text-decoration:none;font-weight:600;white-space:nowrap}
   .abar .back:hover{color:var(--lens-gh)}
 
-  .wrap{max-width:1080px;margin:0 auto;padding:28px 20px 80px}
+  .wrap{max-width:1080px;margin:0 auto;padding:30px 20px 80px}
 
-  .rep-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 18px;margin-bottom:6px}
-  h1{font-size:26px;font-weight:800;letter-spacing:-.02em;margin:0}
+  /* ── report header ── */
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--lens-gh);margin-bottom:8px}
+  h1{font-size:28px;font-weight:800;letter-spacing:-.022em;margin:0 0 4px}
   .rep-meta{font-family:var(--mono);font-size:12px;color:var(--ink-soft)}
-  .fictional-note{font-size:12.5px;color:var(--ink-soft);margin:0 0 18px}
+  .fictional-note{font-size:12.5px;color:var(--ink-soft);margin:8px 0 20px;max-width:78ch}
 
-  section.block{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin-bottom:16px}
+  section.block{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:16px;box-shadow:var(--shadow)}
   section.block h2{font-size:13px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 14px}
 
   /* map + fixed detail panel: grid so the aside never causes layout jump */
@@ -50,9 +53,11 @@
   /* SVG node + edge styles */
   svg.map{width:100%;height:auto;display:block}
   .edge{stroke:var(--ink-soft);stroke-width:1.6;fill:none;opacity:.75}
-  .edge.hot{stroke:var(--lens-gh);stroke-width:2.6;opacity:1;stroke-dasharray:8 5;animation:dashflow 1.1s linear infinite}
-  @keyframes dashflow{to{stroke-dashoffset:-13}}
-  @media (prefers-reduced-motion:reduce){.edge.hot{animation:none}}
+  .edge.hot{stroke:var(--lens-gh);stroke-width:2.6;opacity:1;stroke-dasharray:8 5}
+  @media (prefers-reduced-motion:no-preference){
+    .edge.hot{animation:dashflow 1.1s linear infinite}
+    @keyframes dashflow{to{stroke-dashoffset:-13}}
+  }
   .node rect.box{fill:var(--panel);stroke:var(--ink-soft);stroke-width:1.6;rx:8}
   .node.hotnode rect.box{fill:var(--lens-gh-tint);stroke:var(--lens-gh);stroke-width:2.2}
   .node.unknown rect.box{stroke-dasharray:6 4;stroke:var(--warn)}
@@ -77,7 +82,7 @@
   .legend .l-edge{width:30px;height:0;border-radius:0;border-top:2.5px dashed var(--lens-gh)}
 
   /* detail panel */
-  aside.detail{position:sticky;top:58px;background:var(--ground);border:1px solid var(--line);border-radius:10px;
+  aside.detail{position:sticky;top:58px;background:var(--ground);border:1px solid var(--line);border-radius:12px;
     padding:16px 18px;min-height:340px}
   aside.detail h3{margin:0 0 2px;font-size:16px;font-family:var(--mono);letter-spacing:-.01em}
   aside.detail .layer-tag{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--lens-gh);font-weight:700}
@@ -92,7 +97,7 @@
   .dl ul li{margin-bottom:4px}
 
   /* honest unknowns */
-  .unknowns{background:var(--honest-tint);border:1px solid var(--honest);border-radius:10px;padding:16px 20px;margin-bottom:16px}
+  .unknowns{background:var(--honest-tint);border:1px solid var(--honest);border-radius:12px;padding:16px 20px;margin-bottom:16px;box-shadow:var(--shadow)}
   .unknowns h2{font-size:13px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--honest);margin:0 0 10px}
   .unknowns ul{margin:0;padding-left:18px;font-size:13.5px}
   .unknowns li{margin-bottom:6px}
@@ -100,7 +105,7 @@
   .unknowns code{font-family:var(--mono);font-size:12px}
 
   /* ── shared "How this was made" panel (identical convention across all demos) ── */
-  details.made{margin-top:34px;border:1px solid var(--honest);border-radius:10px;background:var(--honest-tint);overflow:hidden}
+  details.made{margin-top:34px;border:1px solid var(--honest);border-radius:12px;background:var(--honest-tint);overflow:hidden}
   details.made summary{cursor:pointer;padding:13px 18px;font-weight:700;font-size:14px;color:var(--honest);list-style:none}
   details.made summary::-webkit-details-marker{display:none}
   details.made summary::before{content:"▸ ";font-family:var(--mono)}
@@ -110,7 +115,6 @@
   .made-body pre{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px;font-family:var(--mono);
     font-size:12.5px;line-height:1.6;white-space:pre-wrap;margin:0;color:var(--ink)}
   .made-body p{margin:0;font-size:13.5px;color:var(--ink)}
-  .made-body a{color:var(--lens-gh)}
   .copy-btn{margin-top:8px;font:600 12.5px var(--sans);color:var(--panel);background:var(--ink);border:none;border-radius:6px;
     padding:7px 14px;cursor:pointer}
   .copy-btn:hover{background:var(--lens-gh)}
@@ -123,7 +127,7 @@
     body{background:#fff;font-size:11px}
     .abar,details.made,footer.colophon{display:none}
     .wrap{max-width:none;padding:0}
-    section.block,.unknowns{border:1px solid #bbb;break-inside:avoid;margin-bottom:8px;padding:10px 12px}
+    section.block,.unknowns{border:1px solid #bbb;break-inside:avoid;margin-bottom:8px;padding:10px 12px;box-shadow:none}
     .edge.hot{animation:none}
     .map-grid{grid-template-columns:1fr}
   }
@@ -132,23 +136,23 @@
 <body>
 
 <header class="abar">
-  <span class="lens"><span class="dot"></span>GitHub Copilot · engineering lens</span>
-  <span class="file">demos/gh-12-module-map.html</span>
+  <span class="lens"><span class="dot"></span>Engineering lens</span>
+  <span class="file">demos/eng-12-module-map.html</span>
   <span class="badge">Fictional data</span>
   <a class="back" href="../index.html">← all artifacts</a>
 </header>
 
 <div class="wrap">
 
-  <div class="rep-head">
-    <h1>Legacy module map — batch-billing</h1>
-    <span class="rep-meta">12-year-old billing batch engine · migration candidate · Project Lighthouse · mapped 11 Jun 2026</span>
-  </div>
-  <p class="fictional-note">ABC Corp — a fictional company. Every module, function name, and date on this page is invented for demonstration.</p>
+  <div class="eyebrow">Module map · batch-billing</div>
+  <h1>Legacy module map: batch-billing</h1>
+  <div class="rep-meta">12-year-old billing batch engine · migration candidate · Project Lighthouse · mapped 11 Jun 2026</div>
+  <p class="fictional-note">ABC Corp is a fictional company. Every name, number and date is invented.
+  This is a reference artifact generated with an LLM coding agent; the brief that produces it is at the bottom of this page.</p>
 
   <section class="block" aria-label="Module map">
-    <h2>10 modules in 3 layers — nightly billing hot path in teal</h2>
-    <p class="kbd-hint">Click a module — or <kbd>Tab</kbd> to it and press <kbd>Enter</kbd> — to open its details in the side panel.</p>
+    <h2>10 modules in 3 layers · nightly billing hot path in teal</h2>
+    <p class="kbd-hint">Click a module, or <kbd>Tab</kbd> to it and press <kbd>Enter</kbd>, to open its details in the side panel.</p>
     <div class="map-grid">
       <div>
         <svg class="map" viewBox="0 0 880 400" role="group" aria-label="Module map of batch-billing: ten modules in three layers (Intake, Core, Output) connected by arrows showing data flow. The nightly hot path file-poller to staging-loader to rating-engine to invoice-builder to dispatch-queue is highlighted.">
@@ -255,7 +259,7 @@
 
       <aside class="detail" id="detail" aria-live="polite" aria-label="Module details">
         <h3 id="d-name">Module details</h3>
-        <p class="empty" id="d-empty">Nothing selected yet. Click a module in the map — or Tab to one and press Enter.</p>
+        <p class="empty" id="d-empty">Nothing selected yet. Click a module in the map, or Tab to one and press Enter.</p>
         <div id="d-body" hidden>
           <span class="layer-tag" id="d-layer"></span><span class="owner-warn" id="d-owner" hidden>owner unknown</span>
           <dl class="dl">
@@ -271,7 +275,7 @@
   </section>
 
   <div class="unknowns" role="note" aria-label="Honest unknowns">
-    <h2>Honest unknowns — what this map does not know</h2>
+    <h2>Honest unknowns · what this map does not know</h2>
     <ul>
       <li><strong>Runtime config flags.</strong> Modules read ~30 flags from a properties table at startup; the values active in PROD were not captured, and some flags change which code paths run.</li>
       <li><strong>Two cron jobs of unclear purpose.</strong> <code>billing-fix-2019.sh</code> (02:40 nightly) and <code>monthly_recon_patch.sql</code> (1st of month) write directly into Core-layer tables, bypassing the mapped flow. Nobody currently on the team knows why they exist.</li>
@@ -280,38 +284,34 @@
   </div>
 
   <details class="made">
-    <summary>How this was made — the prompt, where it runs, and an honesty note</summary>
+    <summary>How this was made: the brief, how to reproduce it, and an honesty note</summary>
     <div class="made-body">
       <section>
-        <h3>The prompt</h3>
+        <h3>The brief</h3>
         <pre id="prompt-text">Explore the batch-billing package and draw a single-file HTML map of
 its modules as boxes and arrows, grouped by layer: highlight the
 nightly billing hot path, mark modules with no current owner, and for
 each module show entry points, rough size, last-touched date, and
 risk notes in a click-to-open panel. One file, inline SVG, no images.</pre>
-        <button class="copy-btn" data-copy="prompt-text">Copy prompt</button>
+        <button class="copy-btn" data-copy="prompt-text">Copy brief</button>
       </section>
       <section>
-        <h3>Where this runs</h3>
-        <p>GitHub Copilot agent mode works inside your IDE: per
-        <a href="https://docs.github.com/en/copilot/get-started/features">GitHub’s feature documentation</a>, it
-        “will determine which files to make changes to, offer code changes and terminal commands for the user's approval,
-        and iterate to remediate issues until the original task is complete” — so it can produce an artifact like this
-        directly in your repository, alongside the code it describes. What Copilot may do in your organisation is governed by
-        <a href="https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-enterprise/manage-enterprise-policies">enterprise policies</a>
-        set by your admins.</p>
+        <h3>How to reproduce</h3>
+        <p>Paste the brief into any capable LLM: GPT, Claude, Gemini, Grok, DeepSeek, or the assistant your company
+        provides. Iterate a few rounds on layout and content until it reads well. Save the final answer as a
+        <code>.html</code> file and open it in any browser. Expect similar output, not identical: every model has its
+        own taste, and that is fine.</p>
       </section>
       <section>
         <h3>Honesty note</h3>
-        <p>This is a reference artifact, built with an AI coding agent (Claude Code) to illustrate the output format —
-        it was not generated by GitHub Copilot. The prompt above is what you would give Copilot to produce something
-        like it. Results vary by model, tenant configuration, and licence: treat this as a pattern, not a guaranteed output.</p>
+        <p>This reference artifact was built with Claude Code, an LLM coding agent, over several iterations. Treat it
+        as the bar to aim for, not as a guaranteed first answer. All data on this page is fictional.</p>
       </section>
     </div>
   </details>
 
   <footer class="colophon">
-    <span>Part of <a href="../index.html">“The artifact is the demo — HTML in the enterprise”</a></span>
+    <span>Part of <a href="../index.html">"The artifact is the demo: HTML in the enterprise"</a></span>
     <span>Single file · no external requests · works offline</span>
   </footer>
 
@@ -323,7 +323,7 @@ risk notes in a click-to-open panel. One file, inline SVG, no images.</pre>
     'file-poller': { layer:'Intake', owner:true,
       purpose:'Watches the inbound drop directories for nightly usage feeds and hands complete files to the loader. It is the trigger for the whole nightly run.',
       entries:['FilePollerDaemon.run()','DropDirScanner.scan()'], size:'~1.8k lines', changed:'Mar 2024',
-      risks:['Single instance, no failover — if the daemon dies the nightly run silently never starts.','Files arriving during the 02:00 poll gap are picked up a full day late.'] },
+      risks:['Single instance, no failover: if the daemon dies the nightly run silently never starts.','Files arriving during the 02:00 poll gap are picked up a full day late.'] },
     'feed-validator': { layer:'Intake', owner:true,
       purpose:'Runs schema and data-quality checks on incoming feed rows before they reach staging. Rejected rows are diverted to a side table.',
       entries:['FeedValidator.validate()','RuleSet.load()'], size:'~3.1k lines', changed:'Jan 2023',
@@ -339,7 +339,7 @@ risk notes in a click-to-open panel. One file, inline SVG, no images.</pre>
     'discount-resolver': { layer:'Core', owner:false,
       purpose:'Applies contract and volume discounts to rated lines. Discount tiers come from a matrix that is partly hard-coded.',
       entries:['DiscountResolver.apply()','LegacyTierMatrix.lookup()'], size:'~4.2k lines', changed:'Jun 2022',
-      risks:['Owner left ABC Corp in 2024; nobody has claimed it since.','Tier matrix is hard-coded — contract changes require a code release.'] },
+      risks:['Owner left ABC Corp in 2024; nobody has claimed it since.','Tier matrix is hard-coded: contract changes require a code release.'] },
     'invoice-builder': { layer:'Core', owner:true,
       purpose:'Aggregates rated and discounted lines into invoice documents per customer and assigns invoice numbers. Feeds both rendering and dispatch.',
       entries:['InvoiceBuilder.build()','InvoiceNumberSeq.next()'], size:'~5.4k lines', changed:'Feb 2025',
@@ -347,9 +347,9 @@ risk notes in a click-to-open panel. One file, inline SVG, no images.</pre>
     'tax-calculator': { layer:'Core', owner:true,
       purpose:'Applies VAT rules per country code to each invoice line. Rules live in a lookup table refreshed by hand.',
       entries:['TaxCalculator.compute()','VatRuleTable.load()'], size:'~2.9k lines', changed:'Apr 2025',
-      risks:['Rule table is updated manually each January — no automated check that it happened.'] },
+      risks:['Rule table is updated manually each January: no automated check that it happened.'] },
     'pdf-renderer': { layer:'Output', owner:true,
-      purpose:'Renders invoice PDFs from layout templates for customers on document delivery. Not on the nightly hot path — runs as a follow-up batch.',
+      purpose:'Renders invoice PDFs from layout templates for customers on document delivery. Not on the nightly hot path: runs as a follow-up batch.',
       entries:['PdfRenderer.render()','TemplateRegistry.get()'], size:'~3.7k lines', changed:'Aug 2023',
       risks:['Template engine pinned to an old major version.','Memory spikes on invoices over ~200 pages.'] },
     'dispatch-queue': { layer:'Output', owner:true,
@@ -359,7 +359,7 @@ risk notes in a click-to-open panel. One file, inline SVG, no images.</pre>
     'archive-writer': { layer:'Output', owner:false,
       purpose:'Writes invoices and raw batch outputs to the long-term archive and evaluates retention. Last substantive commit predates the current team.',
       entries:['ArchiveWriter.store()','RetentionPolicy.evaluate()'], size:'~1.9k lines', changed:'Dec 2021',
-      risks:['Owner unknown — no commits by current staff.','Retention policy has not been verified against records requirements since 2021.'] }
+      risks:['Owner unknown: no commits by current staff.','Retention policy has not been verified against records requirements since 2021.'] }
   };
 
   /* ── click / keyboard → detail panel (no layout jump: aside is a fixed grid area) ── */
@@ -401,7 +401,7 @@ risk notes in a click-to-open panel. One file, inline SVG, no images.</pre>
       var text = el.textContent;
       function done(ok){
         var old = btn.textContent;
-        btn.textContent = ok ? 'Copied ✓' : 'Copy failed — select the text manually';
+        btn.textContent = ok ? 'Copied ✓' : 'Copy failed, select the text manually';
         setTimeout(function(){ btn.textContent = old; }, 2200);
       }
       if (navigator.clipboard && navigator.clipboard.writeText) {
