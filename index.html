@@ -546,6 +546,10 @@
       try { localStorage.setItem('poh-theme', next); } catch(e){}
     });
 
+    window.addEventListener('storage', function(e){
+      if (e.key === 'poh-theme' && e.newValue) apply(e.newValue);
+    });
+
     if (window.matchMedia) {
       window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e){
         var stored = null;
