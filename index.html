@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The artifact is the demo: HTML in the enterprise</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%2316202E'/><rect x='7' y='13' width='8' height='6' rx='2' fill='%233D5ADB'/><rect x='17' y='13' width='8' height='6' rx='2' fill='%230E7C6B'/></svg>">
-<meta name="color-scheme" content="light dark">
+<meta name="color-scheme" content="dark light">
 <meta name="description" content="13 self-contained HTML artifacts that show what LLMs can produce for business users and engineers in the enterprise. Working examples, honest framing, reproducible briefs.">
 <meta property="og:title" content="The artifact is the demo: HTML in the enterprise">
 <meta property="og:description" content="13 self-contained HTML files showing what LLMs can produce for business users and engineers in the enterprise. Every example is real, every brief is included, all data is fictional.">
@@ -17,7 +17,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <script>
   /* set the theme before first paint to avoid a flash */
-  (function(){try{var t=localStorage.getItem('poh-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+  (function(){try{var t=localStorage.getItem('poh-theme')||'dark';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </script>
 <style>
   :root{
@@ -733,13 +733,12 @@ decommission sign-off moved to 17 Jul.
 </footer>
 
 <script>
-  /* theme: follows system preference, remembers an explicit choice (works from file://) */
+  /* theme: defaults to dark, remembers an explicit choice (works from file://) */
   (function(){
     var root = document.documentElement;
     var saved = null;
     try { saved = localStorage.getItem('poh-theme'); } catch(e){}
-    var system = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    apply(saved || system);
+    apply(saved || 'dark');
 
     document.getElementById('theme-toggle').addEventListener('click', function(){
       var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
@@ -755,7 +754,7 @@ decommission sign-off moved to 17 Jul.
       window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e){
         var stored = null;
         try { stored = localStorage.getItem('poh-theme'); } catch(ex){}
-        if (!stored) apply(e.matches ? 'dark' : 'light');
+        if (!stored) apply('dark'); /* default dark */
       });
     }
 
