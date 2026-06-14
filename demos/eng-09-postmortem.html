@@ -152,6 +152,18 @@
   .blameless h2{color:var(--lens-gh)}
   .blameless p{margin:0;font-size:13.5px}
 
+  /* customer impact statement + control classification + evidence checklist */
+  .cust-impact{border-left:4px solid var(--ok);background:var(--ok-tint);border-radius:0 8px 8px 0;padding:12px 16px;font-size:13.5px;color:var(--ink)}
+  .cust-impact b{color:var(--ok)}
+  .ctrl{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.05em;border-radius:4px;padding:2px 8px;white-space:nowrap}
+  .ctrl.fail{color:var(--bad);background:var(--bad-tint);border:1px solid var(--bad)}
+  .ctrl.held{color:var(--ok);background:var(--ok-tint);border:1px solid var(--ok)}
+  ul.evidence{list-style:none;margin:0;padding:0;font-size:13.5px}
+  ul.evidence li{display:flex;gap:10px;align-items:baseline;padding:7px 0;border-bottom:1px solid var(--line)}
+  ul.evidence li:last-child{border-bottom:none}
+  ul.evidence li::before{content:"\2713";color:var(--ok);font-weight:800}
+  ul.evidence code{font-family:var(--mono);font-size:12px;background:var(--ground);border:1px solid var(--line);border-radius:4px;padding:1px 6px}
+
   /* ── shared "How this was made" panel (identical convention across all demos) ── */
   details.made{margin-top:34px;border:1px solid var(--honest);border-radius:12px;background:var(--honest-tint);overflow:hidden}
   details.made summary{cursor:pointer;padding:13px 18px;font-weight:700;font-size:14px;color:var(--honest);list-style:none}
@@ -360,6 +372,36 @@
         </tr>
       </tbody>
     </table>
+  </section>
+
+  <section class="block" aria-label="Customer impact statement">
+    <h2>Customer impact statement</h2>
+    <p class="cust-impact"><b>No customer impact.</b> All 1,842 duplicate drafts were detected and removed before the 07:00 dispatch window opened. <b>Zero</b> duplicate invoices were sent, no customer data was disclosed, and no customer notification or remediation was required. Financial records were reconciled to source before close of the run.</p>
+  </section>
+
+  <section class="block" aria-label="Control failure classification">
+    <h2>Control classification</h2>
+    <table class="rem">
+      <thead><tr><th>Control</th><th>Type</th><th>Outcome</th></tr></thead>
+      <tbody>
+        <tr><td>Idempotency on retried writes</td><td>Preventive</td><td><span class="ctrl fail">FAILED</span> — absent; root cause</td></tr>
+        <tr><td>Row-count delta alerting</td><td>Detective</td><td><span class="ctrl fail">MISSED</span> — +4.1% sat inside threshold</td></tr>
+        <tr><td>Scheduled reconciliation check</td><td>Detective</td><td><span class="ctrl held">WORKED</span> — caught all 1,842</td></tr>
+        <tr><td>Dispatch-window hold</td><td>Containment</td><td><span class="ctrl held">WORKED</span> — zero customer exposure</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="block" aria-label="Evidence and attachment checklist">
+    <h2>Evidence pack · attachment checklist</h2>
+    <ul class="evidence">
+      <li>Application and reconciliation log excerpts (<code>3 Jun 2026</code>) — included above</li>
+      <li>Duplicate match-list <code>(order_ref, run_id)</code> — 1,842 rows, peer-reviewed on the bridge</li>
+      <li>Cleanup script and dry-run output — <code>batch-billing#498</code></li>
+      <li>Reconciliation re-run report showing clean draft count</li>
+      <li>Incident timeline export for <code>INC-2417</code></li>
+      <li>Remediation tracker linked to standards change (<code>LH-731</code>)</li>
+    </ul>
   </section>
 
   <section class="block blameless" aria-label="Blameless note">

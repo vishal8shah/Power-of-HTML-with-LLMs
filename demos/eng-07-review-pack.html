@@ -72,6 +72,17 @@
   section.block{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin-bottom:16px;box-shadow:var(--shadow);
     transition:transform .15s ease,box-shadow .15s ease}
   section.block:hover{transform:translateY(-1px);box-shadow:var(--shadow-hover)}
+
+  /* machine-readable metadata header (parseable by tooling, archivable) */
+  details.machine{border:1px solid var(--line);border-radius:10px;background:var(--ground);margin-bottom:16px;overflow:hidden}
+  details.machine summary{cursor:pointer;padding:10px 16px;font-family:var(--mono);font-size:11.5px;font-weight:700;
+    letter-spacing:.04em;color:var(--ink-soft);list-style:none}
+  details.machine summary::-webkit-details-marker{display:none}
+  details.machine summary::before{content:"▸ ";}
+  details.machine[open] summary::before{content:"▾ ";}
+  details.machine pre{margin:0;padding:0 16px 14px;font-family:var(--mono);font-size:12px;line-height:1.7;
+    color:var(--ink);white-space:pre;overflow:auto}
+  details.machine .k{color:var(--lens-gh)}
   section.block h2{font-size:13px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 14px}
 
   /* severity chips */
@@ -248,6 +259,24 @@
       <span>Files <b>2</b> · <span style="color:var(--ok);font-weight:700">+30</span> <span style="color:var(--bad);font-weight:700">−15</span></span>
     </div>
   </div>
+
+  <details class="machine">
+    <summary>Machine-readable header — for review tooling and the change record</summary>
+    <pre><span class="k">review_pack</span>:           pricing-service#482
+<span class="k">ticket</span>:                LH-1204
+<span class="k">base</span>:                  main
+<span class="k">head_commit</span>:           a3f92c1
+<span class="k">author</span>:                M. Tanaka
+<span class="k">reviewer</span>:              J. Lindqvist
+<span class="k">decision</span>:              approved_with_conditions
+<span class="k">conditions_blocking</span>:   [N1, N4, N5]
+<span class="k">conditions_followup</span>:   [N2, N6]
+<span class="k">mergeable</span>:             false   # blocking conditions open
+<span class="k">change_record</span>:         CHG-88412
+<span class="k">reviewed_at</span>:           2026-06-11
+<span class="k">re_review_required_by</span>: 2026-06-18   # if not merged within 5 working days
+<span class="k">approval_expires</span>:      on_merge | 2026-06-25</pre>
+  </details>
 
   <section class="block" aria-label="Review notes index">
     <h2>Review notes · <span id="count-label">6 shown</span></h2>

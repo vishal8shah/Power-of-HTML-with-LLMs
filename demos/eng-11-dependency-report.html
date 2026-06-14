@@ -112,6 +112,19 @@
   .chip.lic-flag{color:var(--bad);background:var(--bad-tint);border:1px solid var(--bad);font-size:10px}
   .lic{font-size:12px;color:var(--ink-soft);white-space:nowrap}
 
+  /* exposure assessment table: security teams think in exposure, not package names */
+  table.expo{width:100%;border-collapse:collapse;font-size:12.5px}
+  table.expo th{text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--ink-soft);padding:8px 12px 8px 0;border-bottom:1px solid var(--line);white-space:nowrap}
+  table.expo td{padding:9px 12px 9px 0;border-bottom:1px solid var(--line);vertical-align:top}
+  table.expo tr:last-child td{border-bottom:none}
+  table.expo .pkg{font-family:var(--mono);font-weight:700;font-size:12px}
+  table.expo .advid{font-family:var(--mono);font-size:11px;color:var(--ink-soft)}
+  table.expo .num{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .expo-note{font-size:12.5px;color:var(--ink-soft);margin:0 0 12px}
+  .runtime-yes{color:var(--bad);font-weight:700}
+  .runtime-no{color:var(--ok);font-weight:700}
+
   /* upgrade plan */
   ol.plan{margin:0;padding-left:24px}
   ol.plan li{margin-bottom:11px}
@@ -324,6 +337,52 @@
           <td class="adv-cell"><span class="none">none</span></td>
           <td><span class="lic">Permissive</span></td>
           <td><span class="chip low">LOW · 2 modules</span></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <section class="block" aria-label="Exposure assessment">
+    <h2>Exposure assessment · the three open advisories</h2>
+    <p class="expo-note">Severity is not just the package: it is reachability. CVSS is the inherent score, EPSS the 30-day exploitation probability, and the columns that decide priority are whether the vulnerable code is on a live request path and which business service it sits behind. Scores are fictional, illustrative of the shape of the judgement.</p>
+    <div class="tbl-scroll">
+    <table class="expo">
+      <thead>
+        <tr><th>Package · advisory</th><th>CVSS</th><th>EPSS</th><th>Exploitability</th><th>Runtime exposure</th><th>Business service impacted</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="pkg">corelib-httpclient</span><br><span class="advid">ADV-2026-0042 · header parsing</span></td>
+          <td class="num"><span class="chip high">8.1 HIGH</span></td>
+          <td class="num">42%</td>
+          <td>PoC public</td>
+          <td><span class="runtime-yes">Yes</span> · on the order-intake request path</td>
+          <td>Order intake API (customer-facing)</td>
+        </tr>
+        <tr>
+          <td><span class="pkg">corelib-httpclient</span><br><span class="advid">ADV-2026-0057 · connection reuse</span></td>
+          <td class="num"><span class="chip med">6.5 MED</span></td>
+          <td class="num">9%</td>
+          <td>Theoretical</td>
+          <td><span class="runtime-yes">Yes</span> · same client, lower likelihood</td>
+          <td>Order intake API (customer-facing)</td>
+        </tr>
+        <tr>
+          <td><span class="pkg">fastjson-parser</span><br><span class="advid">ADV-2026-0061 · deep-nesting DoS</span></td>
+          <td class="num"><span class="chip high">7.5 HIGH</span></td>
+          <td class="num">18%</td>
+          <td>PoC public</td>
+          <td><span class="runtime-yes">Yes</span> · parses external order payloads</td>
+          <td>Order payload ingestion (customer-facing)</td>
+        </tr>
+        <tr>
+          <td><span class="pkg">yaml-config-lite</span><br><span class="advid">ADV-2026-0049 · anchor expansion</span></td>
+          <td class="num"><span class="chip med">5.3 MED</span></td>
+          <td class="num">3%</td>
+          <td>Needs local config access</td>
+          <td><span class="runtime-no">No</span> · read once at startup only</td>
+          <td>Deploy / config (internal)</td>
         </tr>
       </tbody>
     </table>
