@@ -23,6 +23,19 @@ tools/make_og_image.py  regenerates the card (build-time only; Pillow required)
 Every file works opened directly from disk (`file://`), makes **zero external requests**, uses
 no frameworks and no build step. The whole tree can be copied as a subfolder into any website.
 
+## Reading paths
+
+The gallery opens with **"Start here"** lanes — business user, engineer, leader, risk / audit —
+that point each reader at the three or four artifacts most relevant to them. It also carries a
+**Markdown vs HTML** comparison, an **enterprise objections, answered** table, and a **when to use
+/ when not to use HTML** split.
+
+The thirteen artifacts link in a ring: each carries a `1/13` … `13/13` position with previous /
+next navigation and a back-to-gallery link, and the HTML deck is artifact 13. Artifacts that are
+interactive in the browser — the KPI dashboard, the RAID board and the module map — also render a
+**static, printable fallback table**, so every figure stays readable with JavaScript disabled and
+in print. All pages support light / dark themes and keyboard focus styles.
+
 ## Honesty note
 
 The artifacts were built with **Claude Code, an LLM coding agent**, over several rounds of
