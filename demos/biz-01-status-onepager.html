@@ -95,6 +95,16 @@
   .sev.high{color:var(--bad);background:var(--bad-tint);border:1px solid var(--bad)}
   .sev.med{color:var(--warn);background:var(--warn-tint);border:1px solid var(--warn)}
 
+  /* decision-needed callout */
+  .decide{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--lens-m365);
+    border-radius:12px;padding:16px 20px;margin-bottom:16px;box-shadow:var(--shadow)}
+  .decide h2{font-size:13px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--lens-m365);margin:0 0 10px}
+  .decide p{margin:0 0 8px;font-size:14px;color:var(--ink)}
+  .decide .ask{font-weight:700}
+  .decide .conf{display:inline-flex;align-items:center;gap:8px;margin-top:4px;font-size:12.5px;color:var(--ink-soft)}
+  .decide .conf b{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.05em;
+    border-radius:99px;padding:2px 9px;color:var(--warn);background:var(--warn-tint);border:1px solid var(--warn)}
+
   /* changes + next */
   .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
   @media (max-width:680px){.two-col{grid-template-columns:1fr}}
@@ -174,8 +184,8 @@
   <span class="file">demos/biz-01-status-onepager.html</span>
   <span class="badge">Fictional data</span>
   <nav class="pager" aria-label="Artifact navigation">
-    <a class="pnav" href="eng-12-module-map.html" aria-label="Previous artifact: Legacy module map" title="Legacy module map">‹</a>
-    <span class="pos">1/12</span>
+    <a class="pnav" href="deck-13-guild-talk.html" aria-label="Previous artifact: The talk itself, as an HTML deck" title="The talk itself, as an HTML deck">‹</a>
+    <span class="pos">1/13</span>
     <a class="pnav" href="biz-02-decisions-actions.html" aria-label="Next artifact: Decisions and actions tracker" title="Decisions and actions tracker">›</a>
   </nav>
   <button class="theme-btn" id="theme-toggle" aria-label="Switch between light and dark theme" title="Light / dark theme">
@@ -288,6 +298,12 @@
         <li>Dry-run the rollback procedure for wave 2 in the staging environment.</li>
       </ul>
     </section>
+  </div>
+
+  <div class="decide" role="note" aria-label="Decision needed this week">
+    <h2>Decision needed this week</h2>
+    <p><span class="ask">Approve front-loading decommission reviews into June</span> so the sign-off can hold at 17 Jul. Without sign-off cover, the 2-week go-live buffer is at risk. Owner: A.&nbsp;Kowalczyk · needed by Fri 19 Jun.</p>
+    <p class="conf">Confidence in the 28 Aug go-live: <b>MEDIUM</b> — held on the current plan, but contingent on a clean wave-2 data-quality run and change-board approval first pass.</p>
   </div>
 
   <details class="made">

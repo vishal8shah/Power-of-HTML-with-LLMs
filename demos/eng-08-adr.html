@@ -133,6 +133,16 @@
   table.dlog td:first-child{font-weight:700;width:140px}
   table.dlog td:last-child{font-family:var(--mono);font-size:12px;color:var(--ink-soft);text-align:right;white-space:nowrap}
 
+  /* anti-decision scope + related ADRs + review date */
+  ul.anti{margin:0;padding-left:18px;font-size:13.5px}
+  ul.anti li{margin-bottom:8px}
+  ul.anti li b{color:var(--ink)}
+  .refs{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .refs .ref{font-family:var(--mono);font-size:12px;border:1px solid var(--line);border-radius:99px;padding:3px 11px;color:var(--ink-soft)}
+  .refs .ref b{color:var(--ink);font-weight:700}
+  .review-date{margin-top:14px;padding:10px 14px;border-left:3px solid var(--honest);background:var(--honest-tint);
+    border-radius:0 8px 8px 0;font-size:13px;color:var(--ink)}
+
   /* ── shared "How this was made" panel (identical convention across all demos) ── */
   details.made{margin-top:34px;border:1px solid var(--honest);border-radius:12px;background:var(--honest-tint);overflow:hidden}
   details.made summary{cursor:pointer;padding:13px 18px;font-weight:700;font-size:14px;color:var(--honest);list-style:none}
@@ -202,7 +212,7 @@
   <span class="badge">Fictional data</span>
   <nav class="pager" aria-label="Artifact navigation">
     <a class="pnav" href="eng-07-review-pack.html" aria-label="Previous artifact: Annotated code review pack" title="Annotated code review pack">‹</a>
-    <span class="pos">8/12</span>
+    <span class="pos">8/13</span>
     <a class="pnav" href="eng-09-postmortem.html" aria-label="Next artifact: Incident post-mortem" title="Incident post-mortem">›</a>
   </nav>
   <button class="theme-btn" id="theme-toggle" aria-label="Switch between light and dark theme" title="Light / dark theme">
@@ -445,6 +455,22 @@
         <tr><td>Accepted by</td><td>P. Mehta (head of engineering) · ADR-009 marked superseded the same day</td><td>5 Jun 2026</td></tr>
       </tbody>
     </table>
+  </section>
+
+  <section class="block" aria-label="Anti-decision and scope">
+    <h2>What this ADR does <em>not</em> decide</h2>
+    <ul class="anti">
+      <li><b>The schema registry and topic-naming convention.</b> Deferred to a follow-up ADR before the first consumer migrates.</li>
+      <li><b>The managed vendor and contract.</b> This ADR commits to a Kafka-compatible managed stream in the EU region, not to a named supplier or pricing tier.</li>
+      <li><b>Migration of the point-to-point task queue.</b> Out of scope: the existing queue stays for point-to-point work; this ADR covers status notifications only.</li>
+      <li><b>Consumer-side delivery semantics in detail.</b> At-least-once with idempotent handling is required; the per-consumer implementation is owned by each team.</li>
+    </ul>
+    <div class="refs" aria-label="Related decision records">
+      <span class="ref"><b>Supersedes</b> · ADR-009 (orders read replica)</span>
+      <span class="ref"><b>Relates to</b> · ADR-006 (residency &amp; DHG-7)</span>
+      <span class="ref"><b>Followed by</b> · ADR-0xx (schema registry, TBD)</span>
+    </div>
+    <p class="review-date"><b>Review date:</b> revisit by <b>5 Dec 2026</b> (six months after acceptance), or sooner if the cost estimate (≈ €120k/yr) is exceeded or a second region is required.</p>
   </section>
 
   <details class="made">

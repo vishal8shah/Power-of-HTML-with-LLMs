@@ -73,6 +73,16 @@
   section.block{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:16px;box-shadow:var(--shadow);
     transition:transform .15s ease,box-shadow .15s ease}
   section.block:hover{transform:translateY(-1px);box-shadow:var(--shadow-hover)}
+
+  /* release decision banner */
+  .rel-decision{border:1.5px solid var(--ok);border-radius:12px;background:var(--ok-tint);padding:16px 20px;margin-bottom:16px;box-shadow:var(--shadow)}
+  .rel-decision h2{font-size:13px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ok);margin:0 0 12px}
+  .dec-opts{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  .dec-opt{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.05em;border-radius:99px;padding:4px 14px;
+    border:1px solid var(--line);color:var(--ink-soft);background:var(--panel)}
+  .dec-opt.on{color:#fff;background:var(--ok);border-color:var(--ok)}
+  .rel-decision .owner{font-size:13.5px;color:var(--ink);margin:0 0 6px}
+  .rel-decision .risk{font-size:13px;color:var(--ink-soft);margin:0}
   section.block h2{font-size:13px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 14px}
 
   /* commit inventory */
@@ -213,7 +223,7 @@
   <span class="badge">Fictional data</span>
   <nav class="pager" aria-label="Artifact navigation">
     <a class="pnav" href="eng-09-postmortem.html" aria-label="Previous artifact: Incident post-mortem" title="Incident post-mortem">‹</a>
-    <span class="pos">10/12</span>
+    <span class="pos">10/13</span>
     <a class="pnav" href="eng-11-dependency-report.html" aria-label="Next artifact: Dependency risk report" title="Dependency risk report">›</a>
   </nav>
   <button class="theme-btn" id="theme-toggle" aria-label="Switch between light and dark theme" title="Light / dark theme">
@@ -241,6 +251,17 @@
     <div><dt>CAB reference</dt><dd>CAB-2026-W24-07</dd></div>
     <div><dt>Result</dt><dd class="plain" style="color:var(--ok);font-weight:700">Deployed · no rollback</dd></div>
   </dl>
+
+  <div class="rel-decision" role="note" aria-label="Release decision">
+    <h2>Release decision</h2>
+    <div class="dec-opts" role="img" aria-label="Decision: proceed">
+      <span class="dec-opt on">PROCEED ✓</span>
+      <span class="dec-opt">HOLD</span>
+      <span class="dec-opt">ROLLBACK</span>
+    </div>
+    <p class="owner"><b>Accountable owner:</b> P. Mehta (head of engineering) · authorised at CAB-2026-W24-07. Release engineer: J. Lindqvist.</p>
+    <p class="risk"><b>Risk acceptance:</b> Normal/medium-risk change. Three MED-risk commits carry idempotency, retry-queue persistence and currency-rounding changes; all gated behind a default-off rollout flag with a 9-minute tested rollback and no schema migration. Residual risk accepted on that basis.</p>
+  </div>
 
   <section class="block" aria-label="Change inventory">
     <h2>Change inventory · 10 commits in scope</h2>

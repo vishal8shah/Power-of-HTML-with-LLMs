@@ -90,6 +90,25 @@
   .legend span{display:inline-flex;align-items:center;gap:6px}
   .legend i{width:10px;height:10px;border-radius:2px;display:inline-block}
 
+  /* ── static data table + RAG read (visible without JS, prints cleanly) ── */
+  table.dt{width:100%;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums}
+  table.dt th{text-align:right;font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--ink-soft);padding:7px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+  table.dt th:first-child,table.dt td:first-child{text-align:left}
+  table.dt td{text-align:right;padding:7px 10px;border-bottom:1px solid var(--ground);color:var(--ink)}
+  table.dt tr:last-child td{border-bottom:none}
+  table.dt tr.latest td{font-weight:700;background:var(--lens-m365-tint)}
+  .rag-list{display:grid;gap:10px;margin:0}
+  .rag-row{display:grid;grid-template-columns:74px 1fr;gap:12px;align-items:baseline}
+  .rag-pill{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.05em;text-align:center;
+    border-radius:99px;padding:4px 0;border:1px solid}
+  .rag-pill.g{color:var(--ok);background:var(--ok-tint);border-color:var(--ok)}
+  .rag-pill.a{color:var(--warn);background:var(--warn-tint);border-color:var(--warn)}
+  .rag-pill.r{color:var(--bad);background:var(--bad-tint);border-color:var(--bad)}
+  .rag-row span{color:var(--ink-soft);font-size:13px}
+  .sowhat{margin-top:14px;padding:12px 14px;border-left:3px solid var(--lens-m365);background:var(--lens-m365-tint);
+    border-radius:0 8px 8px 0;font-size:13px;color:var(--ink)}
+
   /* ── shared "How this was made" panel (identical convention across all demos) ── */
   details.made{margin-top:34px;border:1px solid var(--honest);border-radius:12px;background:var(--honest-tint);overflow:hidden}
   details.made summary{cursor:pointer;padding:13px 18px;font-weight:700;font-size:14px;color:var(--honest);list-style:none}
@@ -145,7 +164,9 @@
       --honest:#9A5B00;--honest-tint:#FFF6E8;--ok:#1F7A33;--ok-tint:#E7F3EA;
       --warn:#B05A00;--warn-tint:#FDF1E3;--bad:#B3261E;--bad-tint:#FBEAE9}
     body{background:#fff}
-    .abar,details.made,footer.colophon,.next-card{display:none}
+    .abar,details.made,footer.colophon,.next-card,.range-toggle{display:none}
+    section.block{break-inside:avoid}
+    table.dt tr{break-inside:avoid}
   }
 </style>
 </head>
@@ -157,7 +178,7 @@
   <span class="badge">Fictional data</span>
   <nav class="pager" aria-label="Artifact navigation">
     <a class="pnav" href="biz-02-decisions-actions.html" aria-label="Previous artifact: Decisions and actions tracker" title="Decisions and actions tracker">‹</a>
-    <span class="pos">3/12</span>
+    <span class="pos">3/13</span>
     <a class="pnav" href="biz-04-onboarding-guide.html" aria-label="Next artifact: Process and onboarding guide" title="Process and onboarding guide">›</a>
   </nav>
   <button class="theme-btn" id="theme-toggle" aria-label="Switch between light and dark theme" title="Light / dark theme">
@@ -195,6 +216,37 @@
       <span><i style="background:var(--lens-m365);opacity:.55"></i>Chat</span>
       <span><i style="background:var(--lens-m365);opacity:.25"></i>Email</span>
     </div>
+  </section>
+
+  <section class="block" aria-label="Targets and RAG read">
+    <h2>What the numbers say — targets &amp; RAG read</h2>
+    <div class="rag-list">
+      <div class="rag-row"><span class="rag-pill g">GREEN</span><div><b>Avg handle time — 7.2 min</b> vs ≤ 7.5 min target. <span>Fifth straight weekly fall; the team is getting more efficient.</span></div></div>
+      <div class="rag-row"><span class="rag-pill g">GREEN</span><div><b>First-contact resolution — 73.8%</b> vs ≥ 73% target. <span>An eight-week high, so fewer customers come back a second time.</span></div></div>
+      <div class="rag-row"><span class="rag-pill a">AMBER</span><div><b>CSAT — 4.19 / 5</b> vs ≥ 4.20 target. <span>Just under target and down from 4.22 two weeks ago — the metric to watch.</span></div></div>
+      <div class="rag-row"><span class="rag-pill a">AMBER</span><div><b>Contacts handled — 2,735 / week</b> vs a 2,400–2,700 capacity band. <span>Above the band; chat volume up ~38% since mid-April is the driver.</span></div></div>
+    </div>
+    <p class="sowhat"><b>So what:</b> efficiency (AHT and FCR) is absorbing the rising volume for now, but CSAT slipping below target is the early warning. If chat keeps climbing, add chat capacity <em>before</em> CSAT drops under 4.15, not after.</p>
+  </section>
+
+  <section class="block" aria-label="Weekly KPI data table">
+    <h2>KPI summary — every week behind the charts</h2>
+    <!-- Static table so the figures are readable without JavaScript and in print. Mirror of the WEEKS array in the script below; keep the two in sync. -->
+    <table class="dt">
+      <thead>
+        <tr><th>Week ending</th><th>Contacts</th><th>AHT (min)</th><th>FCR&nbsp;%</th><th>CSAT</th><th>Phone</th><th>Chat</th><th>Email</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>12 Apr</td><td>2,510</td><td>8.1</td><td>70.4</td><td>4.12</td><td>1,480</td><td>610</td><td>420</td></tr>
+        <tr><td>19 Apr</td><td>2,500</td><td>8.0</td><td>70.9</td><td>4.15</td><td>1,455</td><td>640</td><td>405</td></tr>
+        <tr><td>26 Apr</td><td>2,576</td><td>7.9</td><td>71.5</td><td>4.10</td><td>1,510</td><td>668</td><td>398</td></tr>
+        <tr><td>3 May</td><td>2,555</td><td>7.7</td><td>72.0</td><td>4.18</td><td>1,462</td><td>701</td><td>392</td></tr>
+        <tr><td>10 May</td><td>2,652</td><td>7.6</td><td>71.7</td><td>4.21</td><td>1,530</td><td>742</td><td>380</td></tr>
+        <tr><td>17 May</td><td>2,637</td><td>7.5</td><td>72.6</td><td>4.24</td><td>1,495</td><td>768</td><td>374</td></tr>
+        <tr><td>24 May</td><td>2,714</td><td>7.4</td><td>73.1</td><td>4.22</td><td>1,551</td><td>802</td><td>361</td></tr>
+        <tr class="latest"><td>31 May</td><td>2,735</td><td>7.2</td><td>73.8</td><td>4.19</td><td>1,538</td><td>845</td><td>352</td></tr>
+      </tbody>
+    </table>
   </section>
 
   <details class="made">

@@ -128,15 +128,15 @@
 
   /* ── register rows ── */
   .register{margin-top:22px;border:1px solid var(--line);border-radius:14px;background:var(--panel);overflow:hidden;box-shadow:var(--shadow)}
-  a.row{display:grid;grid-template-columns:50px 44px 1fr auto;gap:8px 16px;align-items:center;
+  a.row{display:grid;grid-template-columns:46px 56px 1fr auto;gap:8px 16px;align-items:center;
     padding:16px 20px 16px 0;text-decoration:none;border-bottom:1px solid var(--ground);
     border-left:4px solid transparent;transition:border-color .12s,background .12s}
   a.row:last-child{border-bottom:none}
   a.row .num{font-family:var(--mono);font-size:12.5px;font-weight:700;text-align:center;color:var(--ink-soft)}
-  .glyph{width:44px;height:44px;border-radius:10px;background:var(--ground);display:flex;align-items:center;justify-content:center;
-    transition:transform .15s ease}
-  a.row:hover .glyph{transform:scale(1.08)}
-  .glyph svg{width:30px;height:30px;overflow:visible}
+  .glyph{width:56px;height:56px;border-radius:11px;background:var(--ground);border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;transition:transform .15s ease,border-color .15s ease}
+  a.row:hover .glyph{transform:scale(1.06)}
+  .glyph svg{width:38px;height:38px;overflow:visible}
   .glyph svg .s{fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
   #business .glyph svg .s{stroke:var(--lens-m365)}
   #engineering .glyph svg .s{stroke:var(--lens-gh)}
@@ -170,6 +170,77 @@
   .bonus .glyph svg .s{stroke:var(--lens-gh)}
   .bonus .glyph svg .f{fill:var(--lens-m365)}
   .bonus a.row:hover .file{color:var(--lens-gh)}
+
+  /* ── personas: start here ── */
+  .start{padding:54px 0 6px}
+  .start h2{font-size:24px;font-weight:800;letter-spacing:-.02em;margin:0 0 8px}
+  .start .sub{color:var(--ink-soft);font-size:14.5px;margin:0 0 22px;max-width:74ch}
+  .persona-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(228px,1fr));gap:14px}
+  .persona{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--line);border-radius:12px;
+    padding:16px 18px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden;
+    transition:transform .15s ease,box-shadow .15s ease}
+  .persona:hover{transform:translateY(-2px);box-shadow:var(--shadow-hover)}
+  .persona .who{font-size:15px;font-weight:800}
+  .persona .why{font-size:13px;color:var(--ink-soft);margin:0;flex:1}
+  .persona .go{display:flex;flex-wrap:wrap;gap:6px}
+  .persona .go a{font-family:var(--mono);font-size:11px;letter-spacing:.02em;text-decoration:none;color:var(--ink-soft);
+    background:var(--ground);border:1px solid var(--line);border-radius:99px;padding:3px 9px;transition:color .12s,border-color .12s}
+  .persona .go a:focus-visible{outline:2px solid var(--lens-m365);outline-offset:2px}
+  .persona.m365{border-top-color:var(--lens-m365)} .persona.m365 .go a:hover{color:var(--lens-m365);border-color:var(--lens-m365)}
+  .persona.gh{border-top-color:var(--lens-gh)} .persona.gh .go a:hover{color:var(--lens-gh);border-color:var(--lens-gh)}
+  .persona.risk{border-top-color:var(--honest)} .persona.risk .go a:hover{color:var(--honest);border-color:var(--honest)}
+  .persona.lead{border-top-color:transparent}
+  .persona.lead::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--lens-m365),var(--lens-gh))}
+  .persona.lead .go a:hover{color:var(--ink);border-color:var(--ink-soft)}
+
+  /* ── markdown vs html comparison ── */
+  .compare{padding:46px 0 0}
+  .compare h2{font-size:24px;font-weight:800;letter-spacing:-.02em;margin:0 0 8px}
+  .compare .sub{color:var(--ink-soft);font-size:14.5px;margin:0 0 20px;max-width:74ch}
+  .compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:stretch}
+  @media (max-width:760px){.compare-grid{grid-template-columns:1fr}}
+  .cmp{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:18px 20px;box-shadow:var(--shadow)}
+  .cmp .tag{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    display:inline-block;margin-bottom:12px;border-radius:99px;padding:3px 11px;border:1px solid}
+  .cmp.md .tag{color:var(--ink-soft);background:var(--ground);border-color:var(--line)}
+  .cmp.htm .tag{color:var(--lens-gh);background:var(--lens-gh-tint);border-color:var(--lens-gh)}
+  .cmp .md-blob{font-family:var(--mono);font-size:11.5px;line-height:1.7;color:var(--ink-soft);white-space:pre-wrap;margin:0}
+  .mini{border:1px solid var(--line);border-radius:9px;overflow:hidden;background:var(--ground)}
+  .mini .mini-top{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid var(--line);background:var(--panel)}
+  .mini .mpill{font-family:var(--mono);font-size:9px;font-weight:800;letter-spacing:.05em;color:#fff;background:var(--warn);border-radius:4px;padding:2px 7px}
+  .mini .mttl{font-size:11.5px;font-weight:700}
+  .mini .mbody{padding:10px 12px;display:grid;gap:7px}
+  .mini .mrow{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:10.5px;color:var(--ink-soft)}
+  .mini .mrow b{color:var(--ink);font-weight:700}
+  .mini .bar{height:6px;border-radius:99px;background:var(--line);overflow:hidden;flex:1;max-width:120px}
+  .mini .bar i{display:block;height:100%;background:var(--lens-m365);border-radius:99px}
+  .cmp-cap{text-align:center;color:var(--ink-soft);font-size:13.5px;margin:16px 0 0}
+  .cmp-cap b{color:var(--ink)}
+
+  /* ── objections + when-to-use ── */
+  .objections{padding:64px 0 0}
+  .objections h2{font-size:24px;font-weight:800;letter-spacing:-.02em;margin:0 0 8px}
+  .objections .sub{color:var(--ink-soft);font-size:14.5px;margin:0 0 20px;max-width:78ch}
+  .objections .box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 22px;box-shadow:var(--shadow)}
+  .obj-table{width:100%;border-collapse:collapse;font-size:13.5px}
+  .obj-table tr:not(:first-child) td{border-top:1px solid var(--ground)}
+  .obj-table td{padding:13px 14px 13px 0;vertical-align:top}
+  .obj-table td.q{font-weight:700;width:230px;color:var(--ink)}
+  .obj-table tr.honest td.q{color:var(--honest)}
+  .obj-table .yes{color:var(--ok);font-weight:700}
+  .usegrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px}
+  @media (max-width:680px){.usegrid{grid-template-columns:1fr}}
+  .usecard{border-radius:12px;padding:16px 20px;border:1px solid}
+  .usecard.dois{background:var(--ok-tint);border-color:var(--ok)}
+  .usecard.dont{background:var(--warn-tint);border-color:var(--warn)}
+  .usecard h3{margin:0 0 10px;font-size:14px}
+  .usecard.dois h3{color:var(--ok)} .usecard.dont h3{color:var(--warn)}
+  .usecard ul{margin:0;padding-left:18px;font-size:13.5px;color:var(--ink)}
+  .usecard li{margin-bottom:6px}
+
+  /* keyboard focus on the gallery rows and jump nav */
+  a.row:focus-visible{outline:2px solid var(--lens-m365);outline-offset:-2px}
+  nav.jump a:focus-visible{outline:2px solid var(--lens-m365);outline-offset:2px}
 
   /* ── why html ── */
   .why{padding:64px 0 0}
@@ -223,8 +294,10 @@
   <div class="wrap">
     <a class="mark" href="#"><span class="dotpair"><i></i><i></i></span>power-of-html<span class="tld">/enterprise</span></a>
     <nav class="jump" aria-label="Sections">
+      <a href="#start">Start here</a>
       <a href="#business">Business</a>
       <a href="#engineering">Engineering</a>
+      <a href="#objections">Objections</a>
       <a href="#why-html">Why HTML</a>
       <a href="#tools">Enterprise tools</a>
       <a href="#credits">Credits</a>
@@ -273,6 +346,92 @@
   </div>
 </div>
 
+<section class="start" id="start">
+  <div class="wrap">
+    <h2>Start here</h2>
+    <p class="sub">Thirteen artifacts is a lot to browse. Pick the lane that matches your role and open three or four
+    that will land. You can wander the full set afterwards.</p>
+    <div class="persona-grid">
+      <div class="persona m365">
+        <span class="who">I'm a business user</span>
+        <p class="why">Documents you produce every week, upgraded. No IDE, no repo: paste a brief, save the HTML, open it.</p>
+        <div class="go">
+          <a href="demos/biz-01-status-onepager.html">B1 status</a>
+          <a href="demos/biz-02-decisions-actions.html">B2 decisions</a>
+          <a href="demos/biz-04-onboarding-guide.html">B4 onboarding</a>
+          <a href="demos/biz-06-townhall-onepager.html">B6 town-hall</a>
+        </div>
+      </div>
+      <div class="persona gh">
+        <span class="who">I'm an engineer</span>
+        <p class="why">Evidence an agent can write next to the code: reviews, decisions, releases, and a map of the legacy.</p>
+        <div class="go">
+          <a href="demos/eng-07-review-pack.html">E7 review</a>
+          <a href="demos/eng-08-adr.html">E8 ADR</a>
+          <a href="demos/eng-10-release-evidence.html">E10 release</a>
+          <a href="demos/eng-12-module-map.html">E12 module map</a>
+        </div>
+      </div>
+      <div class="persona lead">
+        <span class="who">I'm a leader / AI guild</span>
+        <p class="why">The argument itself, as a talk you can run from one file: arrow-key slides with speaker notes.</p>
+        <div class="go">
+          <a href="demos/deck-13-guild-talk.html">D13 the deck</a>
+        </div>
+      </div>
+      <div class="persona risk">
+        <span class="who">I'm in risk / audit</span>
+        <p class="why">What a reviewer actually asks for: a post-mortem, release evidence, and a dependency exposure view.</p>
+        <div class="go">
+          <a href="demos/eng-09-postmortem.html">E9 post-mortem</a>
+          <a href="demos/eng-10-release-evidence.html">E10 release</a>
+          <a href="demos/eng-11-dependency-report.html">E11 dependencies</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="compare">
+  <div class="wrap">
+    <h2>Markdown summary = readable. HTML artifact = usable.</h2>
+    <p class="sub">Same weekly status, two output formats. Ask the LLM for the one on the right.</p>
+    <div class="compare-grid">
+      <div class="cmp md">
+        <span class="tag">Markdown summary</span>
+        <p class="md-blob"># Project Lighthouse — week 24
+**Status:** Amber. Wave-2 started 2 days late;
+decommission sign-off moved to 17 Jul.
+- Budget: 1.94M of 4.2M (under plan)
+- Milestone: wave-2 migration, due 26 Jun
+- Risk: duplicate records (high), API limits (med)
+- Decision needed: approve front-loading reviews</p>
+      </div>
+      <div class="cmp htm">
+        <span class="tag">HTML artifact</span>
+        <div class="mini" role="img" aria-label="Miniature preview of the status one-pager: an amber RAG badge, a milestone timeline, a budget bar and a risk row">
+          <div class="mini-top"><span class="mpill">AMBER</span><span class="mttl">Project Lighthouse · week 24</span></div>
+          <div class="mbody">
+            <svg viewBox="0 0 240 26" width="100%" height="26" aria-hidden="true">
+              <line x1="10" y1="13" x2="230" y2="13" stroke="var(--line)" stroke-width="2"/>
+              <line x1="10" y1="13" x2="120" y2="13" stroke="var(--ok)" stroke-width="2"/>
+              <circle cx="10" cy="13" r="4" fill="var(--ok)"/>
+              <circle cx="65" cy="13" r="4" fill="var(--ok)"/>
+              <circle cx="120" cy="13" r="5" fill="var(--panel)" stroke="var(--lens-m365)" stroke-width="3"/>
+              <circle cx="175" cy="13" r="4" fill="var(--panel)" stroke="var(--warn)" stroke-width="3"/>
+              <circle cx="230" cy="13" r="4" fill="var(--panel)" stroke="var(--line)" stroke-width="3"/>
+            </svg>
+            <div class="mrow"><span>Budget</span><span class="bar"><i style="width:46%"></i></span><b>€1.94M / €4.2M</b></div>
+            <div class="mrow"><span>Top risk</span><b>Duplicate records · HIGH</b></div>
+            <div class="mrow"><span>Decision needed</span><b>Front-load reviews →</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="cmp-cap">Same content. One you <b>skim</b>, one you <b>use</b> — print it, attach it to a ticket, open it on a locked-down laptop.</p>
+  </div>
+</section>
+
 <section class="lens" id="business">
   <div class="wrap">
     <div class="lens-head">
@@ -299,9 +458,12 @@
       <a class="row" href="demos/biz-02-decisions-actions.html">
         <span class="num">B2</span>
         <span class="glyph" aria-hidden="true"><svg viewBox="0 0 30 30">
-          <rect class="s" x="4" y="4" width="22" height="22" rx="4"/>
-          <path class="s" d="M9 12 l3 3 l6 -6"/>
-          <line class="s" x1="9" y1="21" x2="21" y2="21"/>
+          <rect class="s" x="3" y="5" width="24" height="20" rx="3"/>
+          <line class="s" x1="3" y1="11" x2="27" y2="11"/>
+          <rect class="f" x="3" y="5" width="24" height="6" rx="3"/>
+          <path class="s" d="M6 17.5 l2 2 l3.5 -3.5"/>
+          <line class="s" x1="14" y1="17.5" x2="24" y2="17.5"/>
+          <line class="s" x1="6" y1="22" x2="24" y2="22"/>
         </svg></span>
         <span class="main"><span class="t">Decisions and actions tracker</span>
           <span class="d">Meeting recap as a working surface: filter by owner, tick actions off, copy the rest out as Markdown.</span></span>
@@ -324,10 +486,12 @@
       <a class="row" href="demos/biz-04-onboarding-guide.html">
         <span class="num">B4</span>
         <span class="glyph" aria-hidden="true"><svg viewBox="0 0 30 30">
-          <rect class="s" x="4" y="4" width="9" height="9" rx="2"/>
-          <rect class="f" x="17" y="17" width="9" height="9" rx="2"/>
-          <rect class="s" x="17" y="17" width="9" height="9" rx="2"/>
-          <path class="s" d="M13 8 h6 a3 3 0 0 1 3 3 v6"/>
+          <circle class="f" cx="7" cy="8" r="3.4"/><circle class="s" cx="7" cy="8" r="3.4"/>
+          <circle class="s" cx="7" cy="16" r="3.4"/>
+          <circle class="s" cx="7" cy="24" r="3.4"/>
+          <line class="s" x1="13" y1="8" x2="26" y2="8"/>
+          <line class="s" x1="13" y1="16" x2="24" y2="16"/>
+          <line class="s" x1="13" y1="24" x2="22" y2="24"/>
         </svg></span>
         <span class="main"><span class="t">Process and onboarding guide</span>
           <span class="d">A procurement process as collapsible steps with an approval flowchart, instead of a 12-page PDF.</span></span>
@@ -470,6 +634,43 @@
         <span class="side"><span class="chips"><i>arrow keys</i><i>S = notes</i><i>O = overview</i></span>
           <span class="file">deck-13-guild-talk.html</span></span>
       </a>
+    </div>
+  </div>
+</section>
+
+<section class="objections" id="objections">
+  <div class="wrap">
+    <h2>Enterprise objections, answered</h2>
+    <p class="sub">The five questions that come up the moment you suggest this in a regulated organisation. Short, honest answers.</p>
+    <div class="box">
+      <table class="obj-table">
+        <tr><td class="q">Is it secure?</td><td>One file, <span class="yes">zero external requests</span> by construction. Nothing to install, no runtime to CVE-scan. A reviewer can read the whole thing, or just turn the network off.</td></tr>
+        <tr><td class="q">Is it maintainable?</td><td>It is plain text. It diffs in git, reviews like code, and has no framework or build step to churn or break next quarter.</td></tr>
+        <tr><td class="q">Is it auditable?</td><td>It attaches to a change ticket or audit pack as one file, and still opens in two years with nothing but a browser.</td></tr>
+        <tr><td class="q">Better than a PDF or PowerPoint?</td><td>For interactive evidence, yes: it is filterable and printable <em>and</em> diffable. A PDF is none of those, and a deck is not attachable as record.</td></tr>
+        <tr class="honest"><td class="q">Will every LLM nail it first try?</td><td><b>No — and that honesty is the point.</b> You iterate a few rounds, in any capable model. These are the bar to aim for, not a guaranteed first answer. None will reproduce them byte for byte.</td></tr>
+      </table>
+    </div>
+
+    <div class="usegrid">
+      <div class="usecard dois">
+        <h3>Use an HTML artifact when…</h3>
+        <ul>
+          <li>The output has structure: timelines, tables, diffs, dashboards, decisions.</li>
+          <li>Someone will interact with it — filter, sort, toggle, tick off.</li>
+          <li>It is evidence: it must print, attach, and reopen years later.</li>
+          <li>The same content is reused or re-personalised per reader.</li>
+        </ul>
+      </div>
+      <div class="usecard dont">
+        <h3>Reach for something else when…</h3>
+        <ul>
+          <li>A paragraph, an email, or a single table genuinely says it all.</li>
+          <li>The data is large enough to need a real database or BI tool.</li>
+          <li>Multiple people must edit it live and concurrently.</li>
+          <li>It needs server-side auth, or a managed document system of record.</li>
+        </ul>
+      </div>
     </div>
   </div>
 </section>

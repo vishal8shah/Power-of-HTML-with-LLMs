@@ -71,12 +71,20 @@
   .step span strong{color:var(--dark-text)}
 
   /* ── hud ── */
-  .hud{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;gap:16px;
+  .hud{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
     padding:10px 18px;font-family:var(--mono);font-size:11.5px;color:var(--dark-soft);z-index:60}
   .hud .keys{margin-left:auto}
   .hud button{font:inherit;color:var(--dark-soft);background:none;border:1px solid var(--dark-line);border-radius:5px;
     padding:3px 10px;cursor:pointer}
   .hud button:hover{color:var(--dark-text);border-color:var(--dark-soft)}
+  .hud button:focus-visible,.hud a.hud-link:focus-visible{outline:2px solid var(--lens-m365);outline-offset:2px}
+  /* artifact-position marker: distinct from the live slide counter (#counter) */
+  .hud .artno{font-weight:700;color:var(--dark-text);border:1px solid var(--dark-line);border-radius:5px;
+    padding:3px 9px;letter-spacing:.04em}
+  .hud .hud-div{width:1px;height:15px;background:var(--dark-line);opacity:.8}
+  .hud a.hud-link{font:inherit;color:var(--dark-soft);text-decoration:none;border:1px solid var(--dark-line);
+    border-radius:5px;padding:3px 10px}
+  .hud a.hud-link:hover{color:var(--dark-text);border-color:var(--dark-soft)}
   .progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--lens-m365),var(--lens-gh));z-index:60;transition:width .25s ease}
 
   /* ── speaker notes ── */
@@ -289,9 +297,15 @@
 </div>
 
 <div class="hud">
-  <span id="counter">1 / 12</span>
+  <span class="artno">Artifact 13/13</span>
+  <span class="hud-div" aria-hidden="true"></span>
+  <span id="counter" aria-label="Slide position">1 / 12</span>
   <button id="btn-prev" aria-label="Previous slide">←</button>
   <button id="btn-next" aria-label="Next slide">→</button>
+  <span class="hud-div" aria-hidden="true"></span>
+  <a class="hud-link" href="eng-12-module-map.html" aria-label="Previous artifact: Legacy module map" title="Legacy module map">‹ prev</a>
+  <a class="hud-link" href="biz-01-status-onepager.html" aria-label="Next artifact: Weekly status one-pager" title="Weekly status one-pager">next ›</a>
+  <a class="hud-link" href="../index.html" aria-label="Back to all artifacts">↩ all artifacts</a>
   <span class="keys">← → navigate · S notes · O overview · Home/End</span>
 </div>
 

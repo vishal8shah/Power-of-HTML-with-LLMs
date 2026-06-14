@@ -88,6 +88,22 @@
   details.step summary .chip{margin-left:auto}
   details.step summary .chev{margin-left:10px}
 
+  /* fast/slow path + common mistakes */
+  .paths{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media (max-width:680px){.paths{grid-template-columns:1fr}}
+  .path{border:1px solid var(--line);border-radius:10px;padding:14px 16px;background:var(--ground)}
+  .path.fast{border-left:4px solid var(--ok)}
+  .path.slow{border-left:4px solid var(--warn)}
+  .path h3{margin:0 0 8px;font-size:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .path .tag{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.05em;border-radius:99px;padding:2px 8px;border:1px solid}
+  .path.fast .tag{color:var(--ok);background:var(--ok-tint);border-color:var(--ok)}
+  .path.slow .tag{color:var(--warn);background:var(--warn-tint);border-color:var(--warn)}
+  .path ul{margin:8px 0 0;padding-left:18px;font-size:13px;color:var(--ink-soft)}
+  .path ul li{margin-bottom:5px}
+  .mistakes{margin:0;padding-left:18px;font-size:13.5px}
+  .mistakes li{margin-bottom:8px}
+  .mistakes li b{color:var(--ink)}
+
   /* ── FAQ accordion ── */
   details.faq-item{border-bottom:1px solid var(--line)}
   details.faq-item:last-of-type{border-bottom:none}
@@ -172,7 +188,7 @@
   <span class="badge">Fictional data</span>
   <nav class="pager" aria-label="Artifact navigation">
     <a class="pnav" href="biz-03-kpi-dashboard.html" aria-label="Previous artifact: KPI mini-dashboard" title="KPI mini-dashboard">‹</a>
-    <span class="pos">4/12</span>
+    <span class="pos">4/13</span>
     <a class="pnav" href="biz-05-raid-board.html" aria-label="Next artifact: RAID log board" title="RAID log board">›</a>
   </nav>
   <button class="theme-btn" id="theme-toggle" aria-label="Switch between light and dark theme" title="Light / dark theme">
@@ -332,6 +348,40 @@
       <p>The PR record in the portal shows the current step and who holds it. If it has sat with one approver for more
       than three working days, a nudge from you or your line manager is expected and entirely normal.</p>
     </details>
+  </section>
+
+  <section class="block" aria-label="Fast path versus slow path">
+    <h2>Fast path vs slow path</h2>
+    <div class="paths">
+      <div class="path fast">
+        <h3>Fast path <span class="tag">~1 WEEK</span></h3>
+        <ul>
+          <li>Catalogued item from a preferred vendor.</li>
+          <li>Total under €5,000, so no quotes needed.</li>
+          <li>One approval band; no vendor onboarding.</li>
+          <li>Raise the PR with the catalogue line and go.</li>
+        </ul>
+      </div>
+      <div class="path slow">
+        <h3>Slow path <span class="tag">3–4 WEEKS</span></h3>
+        <ul>
+          <li>New vendor, or spend above €25,000.</li>
+          <li>Three quotes (or a single-source justification).</li>
+          <li>Vendor onboarding and due diligence in step 4.</li>
+          <li>Higher approval band with an extra sign-off.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" aria-label="Common mistakes">
+    <h2>Common mistakes that add weeks</h2>
+    <ul class="mistakes">
+      <li><b>Paying against an invoice with no PO.</b> No-PO-no-pay is strict: the invoice is returned and you restart. Raise the PR first, always.</li>
+      <li><b>Leaving the vendor off the preferred list unflagged.</b> The buyer only starts onboarding when it is flagged in the PR description; an unflagged new vendor stalls silently.</li>
+      <li><b>Attaching too few quotes.</b> €5,000–€25,000 needs two quotes, above €25,000 needs three. A short PR bounces straight back.</li>
+      <li><b>Forgetting the goods receipt.</b> The three-way match cannot complete, so the vendor never gets paid and chases you instead.</li>
+    </ul>
   </section>
 
   <section class="block" aria-label="Glossary">

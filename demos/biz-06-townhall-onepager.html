@@ -103,6 +103,19 @@
   .faq .a b{color:var(--ink)}
 
   /* contact box */
+  /* "what is not changing" reassurance box + manager talking points */
+  .nochange{background:var(--ok-tint);border:1px solid var(--ok);border-radius:12px;padding:18px 22px;box-shadow:var(--shadow)}
+  .nochange h2{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ok);margin:0 0 12px;border:none;padding:0}
+  .nochange ul{margin:0;padding-left:18px;font-size:14px;color:var(--ink);columns:2;column-gap:28px}
+  @media (max-width:620px){.nochange ul{columns:1}}
+  .nochange li{margin-bottom:6px;break-inside:avoid}
+  .talk{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--lens-m365);border-radius:12px;padding:18px 22px;box-shadow:var(--shadow)}
+  .talk h2{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--lens-m365);margin:0 0 6px;border:none;padding:0}
+  .talk .sub{font-size:13px;color:var(--ink-soft);margin:0 0 12px}
+  .talk ul{margin:0;padding-left:18px;font-size:14px}
+  .talk li{margin-bottom:8px}
+  .talk li b{color:var(--ink)}
+
   .contact{background:var(--lens-m365-tint);border:1px solid var(--lens-m365);border-radius:12px;padding:22px 26px;box-shadow:var(--shadow)}
   .contact h2{font-size:16px;margin:0 0 8px}
   .contact p{margin:0;font-size:14.5px}
@@ -176,7 +189,7 @@
   <span class="badge">Fictional data</span>
   <nav class="pager" aria-label="Artifact navigation">
     <a class="pnav" href="biz-05-raid-board.html" aria-label="Previous artifact: RAID log board" title="RAID log board">‹</a>
-    <span class="pos">6/12</span>
+    <span class="pos">6/13</span>
     <a class="pnav" href="eng-07-review-pack.html" aria-label="Next artifact: Annotated code review pack" title="Annotated code review pack">›</a>
   </nav>
   <button class="theme-btn" id="theme-toggle" aria-label="Switch between light and dark theme" title="Light / dark theme">
@@ -218,6 +231,20 @@
         <p>Weekend cover moves from volunteer overtime to a planned rota shared across all Customer Operations
         teams: roughly one weekend in eight, scheduled a quarter ahead and compensated with time in lieu.</p>
       </div>
+    </div>
+  </section>
+
+  <section class="announce">
+    <div class="nochange" role="note" aria-label="What is not changing">
+      <h2>What is NOT changing</h2>
+      <ul>
+        <li>Your contract and notice terms.</li>
+        <li>Your grade and salary.</li>
+        <li>Your office location.</li>
+        <li>Your contracted weekday hours.</li>
+        <li>Engineering reporting lines and on-call.</li>
+        <li>Your annual leave already booked.</li>
+      </ul>
     </div>
   </section>
 
@@ -320,6 +347,20 @@
     <h2 id="h-contact">Questions?</h2>
     <p>Ask at the town hall on 15 June, raise it with your manager, or write to the programme comms mailbox:
     <code>lighthouse-comms@abc-corp.example</code>. Every message gets a reply within two working days.</p>
+  </section>
+
+  <section class="announce">
+    <div class="talk" aria-label="Manager talking points">
+      <h2>Manager talking points</h2>
+      <p class="sub">For team leads running the follow-up conversation. Lead with what is not changing.</p>
+      <ul>
+        <li><b>Open with reassurance.</b> Contract, grade, salary and office are unchanged for everyone — say this first.</li>
+        <li><b>Be concrete on timing.</b> Team mapping lands 1 July; nobody changes team before 1 September; training is in working hours.</li>
+        <li><b>Own the weekend rota honestly.</b> It is not voluntary, it is light (about one weekend in eight, a quarter ahead, time in lieu), and caring or study constraints are planned around.</li>
+        <li><b>Name the migration caveat.</b> Open cases move with full history; attachments over three years old go read-only but stay searchable.</li>
+        <li><b>Close with the route.</b> Questions to you, or the comms mailbox — every message gets a reply within two working days.</li>
+      </ul>
+    </div>
   </section>
 
   <details class="made">
