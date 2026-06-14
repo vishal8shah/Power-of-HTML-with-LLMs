@@ -120,6 +120,22 @@
   .dl ul{margin:2px 0 0;padding-left:17px}
   .dl ul li{margin-bottom:4px}
 
+  /* ── static modules table (visible without JS, prints as the audit summary) ── */
+  table.modules{width:100%;border-collapse:collapse;font-size:12.5px}
+  table.modules th{text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--ink-soft);padding:8px 12px 8px 0;border-bottom:1px solid var(--line);white-space:nowrap}
+  table.modules td{padding:9px 12px 9px 0;border-bottom:1px solid var(--ground);vertical-align:top;color:var(--ink)}
+  table.modules tr:last-child td{border-bottom:none}
+  table.modules td.mod{font-family:var(--mono);font-weight:700}
+  table.modules td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+  table.modules .owner-unk{color:var(--warn);font-weight:700}
+  table.modules .hot{color:var(--lens-gh);font-weight:700}
+  .diff{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.04em;border-radius:99px;padding:2px 8px;border:1px solid;white-space:nowrap}
+  .diff.high{color:var(--bad);background:var(--bad-tint);border-color:var(--bad)}
+  .diff.med{color:var(--warn);background:var(--warn-tint);border-color:var(--warn)}
+  .diff.low{color:var(--ok);background:var(--ok-tint);border-color:var(--ok)}
+  @media (max-width:640px){table.modules{font-size:11.5px}}
+
   /* honest unknowns */
   .unknowns{background:var(--honest-tint);border:1px solid var(--honest);border-radius:12px;padding:16px 20px;margin-bottom:16px;box-shadow:var(--shadow)}
   .unknowns h2{font-size:13px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--honest);margin:0 0 10px}
@@ -188,6 +204,9 @@
     section.block,.unknowns{border:1px solid #bbb;break-inside:avoid;margin-bottom:8px;padding:10px 12px;box-shadow:none}
     .edge.hot{animation:none}
     .map-grid{grid-template-columns:1fr}
+    /* the modules table is the audit summary: let it flow across pages, keep rows whole */
+    section[aria-label="All modules"]{break-inside:auto}
+    table.modules tr{break-inside:avoid}
   }
 </style>
 </head>
@@ -199,8 +218,8 @@
   <span class="badge">Fictional data</span>
   <nav class="pager" aria-label="Artifact navigation">
     <a class="pnav" href="eng-11-dependency-report.html" aria-label="Previous artifact: Dependency risk report" title="Dependency risk report">‹</a>
-    <span class="pos">12/12</span>
-    <a class="pnav" href="biz-01-status-onepager.html" aria-label="Next artifact: Weekly status one-pager" title="Weekly status one-pager">›</a>
+    <span class="pos">12/13</span>
+    <a class="pnav" href="deck-13-guild-talk.html" aria-label="Next artifact: The talk itself, as an HTML deck" title="The talk itself, as an HTML deck">›</a>
   </nav>
   <button class="theme-btn" id="theme-toggle" aria-label="Switch between light and dark theme" title="Light / dark theme">
     <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/></svg>
@@ -341,6 +360,28 @@
     </div>
   </section>
 
+  <section class="block" aria-label="All modules">
+    <h2>All modules · printable summary</h2>
+    <p class="kbd-hint">The same data as the click panel, as a static table the interactive map needs JavaScript, but an audit reader needs a page they can print and sign.</p>
+    <table class="modules">
+      <thead>
+        <tr><th>Module</th><th>Layer</th><th>Owner</th><th>Approx size</th><th>Last change</th><th>Migration difficulty</th><th>Hot path</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="mod">file-poller</td><td>Intake</td><td>owned</td><td class="num">~1.8k lines</td><td class="num">Mar 2024</td><td><span class="diff med">MEDIUM</span></td><td class="hot">yes</td></tr>
+        <tr><td class="mod">feed-validator</td><td>Intake</td><td>owned</td><td class="num">~3.1k lines</td><td class="num">Jan 2023</td><td><span class="diff med">MEDIUM</span></td><td>—</td></tr>
+        <tr><td class="mod">staging-loader</td><td>Intake</td><td>owned</td><td class="num">~2.6k lines</td><td class="num">Sep 2024</td><td><span class="diff med">MEDIUM</span></td><td class="hot">yes</td></tr>
+        <tr><td class="mod">rating-engine</td><td>Core</td><td>owned</td><td class="num">~9.8k lines</td><td class="num">Nov 2023</td><td><span class="diff high">HIGH</span></td><td class="hot">yes</td></tr>
+        <tr><td class="mod">discount-resolver</td><td>Core</td><td class="owner-unk">unknown</td><td class="num">~4.2k lines</td><td class="num">Jun 2022</td><td><span class="diff high">HIGH</span></td><td>—</td></tr>
+        <tr><td class="mod">invoice-builder</td><td>Core</td><td>owned</td><td class="num">~5.4k lines</td><td class="num">Feb 2025</td><td><span class="diff high">HIGH</span></td><td class="hot">yes</td></tr>
+        <tr><td class="mod">tax-calculator</td><td>Core</td><td>owned</td><td class="num">~2.9k lines</td><td class="num">Apr 2025</td><td><span class="diff med">MEDIUM</span></td><td>—</td></tr>
+        <tr><td class="mod">pdf-renderer</td><td>Output</td><td>owned</td><td class="num">~3.7k lines</td><td class="num">Aug 2023</td><td><span class="diff med">MEDIUM</span></td><td>—</td></tr>
+        <tr><td class="mod">dispatch-queue</td><td>Output</td><td>owned</td><td class="num">~2.2k lines</td><td class="num">Oct 2024</td><td><span class="diff med">MEDIUM</span></td><td class="hot">yes</td></tr>
+        <tr><td class="mod">archive-writer</td><td>Output</td><td class="owner-unk">unknown</td><td class="num">~1.9k lines</td><td class="num">Dec 2021</td><td><span class="diff high">HIGH</span></td><td>—</td></tr>
+      </tbody>
+    </table>
+  </section>
+
   <div class="unknowns" role="note" aria-label="Honest unknowns">
     <h2>Honest unknowns · what this map does not know</h2>
     <ul>
@@ -377,9 +418,9 @@ risk notes in a click-to-open panel. One file, inline SVG, no images.</pre>
     </div>
   </details>
 
-  <a class="next-card" href="biz-01-status-onepager.html">
+  <a class="next-card" href="deck-13-guild-talk.html">
     <span class="k">Next artifact</span>
-    <span class="t">Weekly status one-pager →</span>
+    <span class="t">The talk itself, as an HTML deck →</span>
   </a>
 
   <footer class="colophon">

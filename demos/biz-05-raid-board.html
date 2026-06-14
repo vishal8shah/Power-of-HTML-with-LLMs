@@ -182,6 +182,10 @@
       --warn:#B05A00;--warn-tint:#FDF1E3;--bad:#B3261E;--bad-tint:#FBEAE9}
     body{background:#fff}
     .abar,details.made,footer.colophon,.next-card{display:none}
+    /* interactive-only controls add nothing on paper; the seeded board + owner summary do */
+    .toolbar,.nosave,section[aria-label="Add an item"],section[aria-label="Export the board"]{display:none}
+    table.raid tr{break-inside:avoid}
+    section.block{break-inside:avoid}
   }
 </style>
 </head>
@@ -193,7 +197,7 @@
   <span class="badge">Fictional data</span>
   <nav class="pager" aria-label="Artifact navigation">
     <a class="pnav" href="biz-04-onboarding-guide.html" aria-label="Previous artifact: Process and onboarding guide" title="Process and onboarding guide">‹</a>
-    <span class="pos">5/12</span>
+    <span class="pos">5/13</span>
     <a class="pnav" href="biz-06-townhall-onepager.html" aria-label="Next artifact: Town-hall announcement" title="Town-hall announcement">›</a>
   </nav>
   <button class="theme-btn" id="theme-toggle" aria-label="Switch between light and dark theme" title="Light / dark theme">
@@ -231,9 +235,44 @@
       <thead>
         <tr><th>ID</th><th>Type</th><th>Item</th><th>Owner</th><th>Severity</th><th>Status</th></tr>
       </thead>
-      <tbody id="board-body"></tbody>
+      <!-- These rows are pre-rendered so the board is fully visible without JavaScript and in print.
+           render() in the script below overwrites this tbody with identical markup; keep the two in sync. -->
+      <tbody id="board-body">
+        <tr><td class="idc">R-01</td><td><span class="typechip">Risk</span></td><td class="titlec"><b>Duplicate customer records in wave-2 source data</b><span class="det">Unresolved duplicates could corrupt billing history when batch-billing replays invoices after migration.</span></td><td class="ownerc">S. de Wit</td><td><span class="sev high">HIGH</span></td><td><span class="stat open"><i></i>open</span></td></tr>
+        <tr><td class="idc">R-02</td><td><span class="typechip">Risk</span></td><td class="titlec"><b>Vendor API rate limits during peak migration windows</b><span class="det">Throughput caps on the pricing-service vendor API may stretch the wave-2 schedule past 26 Jun.</span></td><td class="ownerc">R. Okafor</td><td><span class="sev med">MED</span></td><td><span class="stat monitoring"><i></i>monitoring</span></td></tr>
+        <tr><td class="idc">R-03</td><td><span class="typechip">Risk</span></td><td class="titlec"><b>Key SMEs on leave through July</b><span class="det">Decommission review capacity is thin; deputies are named but have not yet shadowed a full review cycle.</span></td><td class="ownerc">A. Kowalczyk</td><td><span class="sev med">MED</span></td><td><span class="stat monitoring"><i></i>monitoring</span></td></tr>
+        <tr><td class="idc">R-04</td><td><span class="typechip">Risk</span></td><td class="titlec"><b>Rollback procedure untested at wave-2 volume</b><span class="det">The staging dry-run on 18 Jun is the first test of order-gateway rollback above 50k records.</span></td><td class="ownerc">M. Tanaka</td><td><span class="sev high">HIGH</span></td><td><span class="stat open"><i></i>open</span></td></tr>
+        <tr><td class="idc">R-05</td><td><span class="typechip">Risk</span></td><td class="titlec"><b>Training material drift after tooling change</b><span class="det">Screenshots in the onboarding deck predate the new case tooling; low impact, easily refreshed.</span></td><td class="ownerc">J. Lindqvist</td><td><span class="sev low">LOW</span></td><td><span class="stat open"><i></i>open</span></td></tr>
+        <tr><td class="idc">A-01</td><td><span class="typechip">Assumption</span></td><td class="titlec"><b>Wave-2 data volumes match wave-1 profile</b><span class="det">Capacity planning assumes ±10% of wave-1 record counts; a profiling run will confirm by 16 Jun.</span></td><td class="ownerc">R. Okafor</td><td><span class="sev med">MED</span></td><td><span class="stat monitoring"><i></i>monitoring</span></td></tr>
+        <tr><td class="idc">A-02</td><td><span class="typechip">Assumption</span></td><td class="titlec"><b>Change board approves decommission plan first pass</b><span class="det">Schedule has no slack for a resubmission cycle; legal pre-review was done to de-risk this.</span></td><td class="ownerc">P. Mehta</td><td><span class="sev med">MED</span></td><td><span class="stat open"><i></i>open</span></td></tr>
+        <tr><td class="idc">A-03</td><td><span class="typechip">Assumption</span></td><td class="titlec"><b>No regulatory reporting changes before go-live</b><span class="det">The compliance calendar shows nothing landing before 28 Aug; confirmed with the policy desk in May.</span></td><td class="ownerc">A. Kowalczyk</td><td><span class="sev low">LOW</span></td><td><span class="stat closed"><i></i>closed</span></td></tr>
+        <tr><td class="idc">I-01</td><td><span class="typechip">Issue</span></td><td class="titlec"><b>Environment access delays blocked wave-2 start</b><span class="det">Migration started two days late because firewall changes for batch-billing missed the change window.</span></td><td class="ownerc">M. Tanaka</td><td><span class="sev high">HIGH</span></td><td><span class="stat open"><i></i>open</span></td></tr>
+        <tr><td class="idc">I-02</td><td><span class="typechip">Issue</span></td><td class="titlec"><b>Reconciliation report mislabels currency column</b><span class="det">EUR amounts show under a column headed “local”; cosmetic but it confused the wave-1 sign-off review.</span></td><td class="ownerc">S. de Wit</td><td><span class="sev low">LOW</span></td><td><span class="stat closed"><i></i>closed</span></td></tr>
+        <tr><td class="idc">I-03</td><td><span class="typechip">Issue</span></td><td class="titlec"><b>Duplicate alerts from old and new monitoring</b><span class="det">Both stacks page the on-call for the same order-gateway events; suppression rule is drafted.</span></td><td class="ownerc">J. Lindqvist</td><td><span class="sev med">MED</span></td><td><span class="stat monitoring"><i></i>monitoring</span></td></tr>
+        <tr><td class="idc">D-01</td><td><span class="typechip">Dependency</span></td><td class="titlec"><b>Vendor night-window batching agreement</b><span class="det">Wave-2 throughput plan depends on the vendor honouring the agreed 22:00–05:00 batch window.</span></td><td class="ownerc">R. Okafor</td><td><span class="sev high">HIGH</span></td><td><span class="stat monitoring"><i></i>monitoring</span></td></tr>
+        <tr><td class="idc">D-02</td><td><span class="typechip">Dependency</span></td><td class="titlec"><b>Legal review of decommission plan</b><span class="det">Sign-off moved to 17 Jul to fit the legal review cycle; everything after it shifts if this slips.</span></td><td class="ownerc">P. Mehta</td><td><span class="sev med">MED</span></td><td><span class="stat open"><i></i>open</span></td></tr>
+        <tr><td class="idc">D-03</td><td><span class="typechip">Dependency</span></td><td class="titlec"><b>Finance freeze calendar for August</b><span class="det">Go-live cutover needs a two-day posting freeze; dates requested from finance, answer due 20 Jun.</span></td><td class="ownerc">A. Kowalczyk</td><td><span class="sev med">MED</span></td><td><span class="stat open"><i></i>open</span></td></tr>
+      </tbody>
     </table>
     <div class="empty" id="board-empty" hidden>No items in this category yet. Add one below.</div>
+  </section>
+
+  <section class="block" aria-label="Owner workload summary">
+    <h2>Owner workload at a glance</h2>
+    <p class="add-hint">Snapshot of the 14 seeded items by owner, so nobody leaves the session without knowing what they hold. High-severity counts are what to watch.</p>
+    <table class="raid owners">
+      <thead>
+        <tr><th>Owner</th><th>Items</th><th>High severity</th><th>Open / monitoring</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="ownerc">M. Tanaka</td><td>2</td><td><span class="sev high">2</span></td><td>2 open</td></tr>
+        <tr><td class="ownerc">R. Okafor</td><td>3</td><td><span class="sev high">1</span></td><td>3 monitoring</td></tr>
+        <tr><td class="ownerc">S. de Wit</td><td>2</td><td><span class="sev high">1</span></td><td>1 open · 1 closed</td></tr>
+        <tr><td class="ownerc">A. Kowalczyk</td><td>3</td><td>—</td><td>2 open · 1 closed</td></tr>
+        <tr><td class="ownerc">P. Mehta</td><td>2</td><td>—</td><td>2 open</td></tr>
+        <tr><td class="ownerc">J. Lindqvist</td><td>2</td><td>—</td><td>1 open · 1 monitoring</td></tr>
+      </tbody>
+    </table>
   </section>
 
   <section class="block" aria-label="Add an item">
