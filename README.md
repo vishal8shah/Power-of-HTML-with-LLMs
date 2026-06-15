@@ -1,7 +1,7 @@
 # The artifact is the demo: HTML in the enterprise
 
 Thirteen self-contained `.html` artifacts showing what LLMs can produce for **business users**
-and for **engineers in regulated environments**, plus a gallery page that ties it together.
+and for **engineers**, plus a gallery page that ties it together.
 Each artifact carries the brief that produces it. Run that brief in the model of your choice
 (GPT, Claude, Gemini, Grok, DeepSeek, or your enterprise assistant), iterate a few rounds, and
 you will get similar output. Not identical, and that is the point: the capability belongs to
@@ -25,7 +25,7 @@ no frameworks and no build step. The whole tree can be copied as a subfolder int
 
 ## Reading paths
 
-The gallery opens with **"Start here"** lanes — business user, engineer, leader, risk / audit —
+The gallery opens with **"Start here"** lanes — business user, engineer, leader, risk / control —
 that point each reader at the three or four artifacts most relevant to them. It also carries a
 **Markdown vs HTML** comparison, an **enterprise objections, answered** table, and a **when to use
 / when not to use HTML** split.
