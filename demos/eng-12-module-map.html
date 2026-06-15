@@ -120,7 +120,7 @@
   .dl ul{margin:2px 0 0;padding-left:17px}
   .dl ul li{margin-bottom:4px}
 
-  /* ── static modules table (visible without JS, prints as the audit summary) ── */
+  /* ── static modules table (visible without JS, prints as the evidence summary) ── */
   table.modules{width:100%;border-collapse:collapse;font-size:12.5px}
   table.modules th{text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;
     color:var(--ink-soft);padding:8px 12px 8px 0;border-bottom:1px solid var(--line);white-space:nowrap}
@@ -204,7 +204,7 @@
     section.block,.unknowns{border:1px solid #bbb;break-inside:avoid;margin-bottom:8px;padding:10px 12px;box-shadow:none}
     .edge.hot{animation:none}
     .map-grid{grid-template-columns:1fr}
-    /* the modules table is the audit summary: let it flow across pages, keep rows whole */
+    /* the modules table is the printable summary: let it flow across pages, keep rows whole */
     section[aria-label="All modules"]{break-inside:auto}
     table.modules tr{break-inside:avoid}
   }
@@ -362,7 +362,7 @@
 
   <section class="block" aria-label="All modules">
     <h2>All modules · printable summary</h2>
-    <p class="kbd-hint">The same data as the click panel, as a static table the interactive map needs JavaScript, but an audit reader needs a page they can print and sign.</p>
+    <p class="kbd-hint">The same data as the click panel, as a static table the interactive map needs JavaScript, but a reviewer needs a page they can print and sign.</p>
     <table class="modules">
       <thead>
         <tr><th>Module</th><th>Layer</th><th>Owner</th><th>Approx size</th><th>Last change</th><th>Migration difficulty</th><th>Hot path</th></tr>

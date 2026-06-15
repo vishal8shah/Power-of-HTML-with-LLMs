@@ -153,7 +153,7 @@
       <li><strong>Opens everywhere.</strong> Every locked-down laptop already has a browser.</li>
       <li><strong>No new licences.</strong> No extra tooling, viewers, or runtimes to procure.</li>
       <li><strong>Plain text under the hood.</strong> Versionable and diffable in git like any code.</li>
-      <li><strong>Attachable.</strong> Drops into a change ticket, audit pack, or mail as-is.</li>
+      <li><strong>Attachable.</strong> Drops into a change ticket, evidence pack, or mail as-is.</li>
       <li><strong>Works air-gapped.</strong> Zero external requests, by construction.</li>
     </ul>
   </section>
@@ -206,9 +206,9 @@
   </section>
 
   <!-- 8 ──────────────────────────────────────── -->
-  <section class="slide" data-notes="Six engineering artifacts. The theme is auditability: these are the documents regulators and internal audit actually ask for, and HTML is the format that is still openable in two years with no tooling. The review pack and release evidence report are my favourites to show auditors.">
+  <section class="slide" data-notes="Six engineering artifacts. The theme is comprehension: these are dense evidence documents — reviews, decisions, incidents, releases — and HTML makes them navigable and still openable in two years with no tooling. The agent drafts them; a person reviews and signs the contents. The review pack and release evidence report are my favourites to walk through.">
     <div class="kicker eng">Lens 2 · the artifacts</div>
-    <h2>Engineering documents that survive an audit</h2>
+    <h2>Engineering documents built to be understood, not just read</h2>
     <div class="twin">
       <div class="panelbox eng">
         <ul>
@@ -254,6 +254,7 @@
       <li>The examples were built with an LLM coding agent <strong>over several iterations</strong>. They show the format's potential, not a guaranteed first answer. Each one says so, on itself.</li>
       <li>Every artifact ships its own brief. <strong>Reproduce it with your model</strong> and judge the result yourself.</li>
       <li>Different models, different output. <strong>Similar, not identical.</strong> The format's properties are what carry over.</li>
+      <li>An LLM can be <strong>confidently wrong</strong>. Treat every artifact as a first draft to check — a person verifies and owns the contents before anyone relies on them.</li>
       <li>All data is fictional: ABC Corp does not exist.</li>
     </ul>
   </section>
@@ -276,7 +277,7 @@
         <ul>
           <li>On your next significant PR, have your agent draft a <strong>review pack or ADR</strong> beside the change.</li>
           <li>Commit the artifact to the repo. It diffs like code because it is code.</li>
-          <li>Attach it to the change record. Watch your auditors smile.</li>
+          <li>Attach it to the change record, and review it like any other evidence.</li>
         </ul>
       </div>
     </div>

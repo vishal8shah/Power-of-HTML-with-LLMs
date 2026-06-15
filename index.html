@@ -341,8 +341,9 @@
     <span class="tag">Read this first</span>
     <p>These artifacts were built with <strong>Claude Code, an LLM coding agent</strong>, over several rounds of
     iteration. They are shown as the bar to aim for, not as a guaranteed first answer. Any capable model can reach
-    similar quality if you iterate; none will reproduce these byte for byte. All names and numbers are fictional.
-    ABC Corp does not exist.</p>
+    similar quality if you iterate; none will reproduce these byte for byte. Treat each artifact as a first draft to
+    check, not a finished record: an LLM can be confidently wrong, so a person reviews and owns the contents before
+    anyone relies on them. All names and numbers are fictional. ABC Corp does not exist.</p>
   </div>
 </div>
 
@@ -380,8 +381,8 @@
         </div>
       </div>
       <div class="persona risk">
-        <span class="who">I'm in risk / audit</span>
-        <p class="why">What a reviewer actually asks for: a post-mortem, release evidence, and a dependency exposure view.</p>
+        <span class="who">I'm in risk / control</span>
+        <p class="why">The documents reviewers work from: a post-mortem, release evidence, and a dependency exposure view — drafted by the agent, checked by you.</p>
         <div class="go">
           <a href="demos/eng-09-postmortem.html">E9 post-mortem</a>
           <a href="demos/eng-10-release-evidence.html">E10 release</a>
@@ -531,11 +532,12 @@ decommission sign-off moved to 17 Jul.
   <div class="wrap">
     <div class="lens-head">
       <div class="eyebrow">Lens 2 · LLMs for engineers in regulated environments</div>
-      <h2>Documents that survive an audit</h2>
+      <h2>Documents built to be understood, not just read</h2>
       <p>Engineering teams in banks and other regulated companies live on evidence: reviews, decisions, incident
       records, release packs. An LLM coding agent can write that evidence next to the code it describes, as a file in
       the repo. HTML earns its place here because the result diffs like code, attaches to a change ticket, and still
-      opens in two years with no tooling.</p>
+      opens in two years with no tooling. The agent drafts the evidence; a person still reviews and signs it — the
+      format is what's dependable here, not the first draft's contents.</p>
     </div>
     <div class="register">
       <a class="row" href="demos/eng-07-review-pack.html">
@@ -587,7 +589,7 @@ decommission sign-off moved to 17 Jul.
           <path class="s" d="M11 14 l3 3 l5.5 -6"/>
         </svg></span>
         <span class="main"><span class="t">Release evidence report</span>
-          <span class="d">Commits, test results, approvals and the rollback plan for one change record. What audit actually asks for.</span></span>
+          <span class="d">Commits, test results, approvals and the rollback plan for one change record. Structured the way change reviewers expect.</span></span>
         <span class="side"><span class="chips"><i>test evidence</i><i>prints clean</i></span>
           <span class="file">eng-10-release-evidence.html</span></span>
       </a>
@@ -646,7 +648,7 @@ decommission sign-off moved to 17 Jul.
       <table class="obj-table">
         <tr><td class="q">Is it secure?</td><td>One file, <span class="yes">zero external requests</span> by construction. Nothing to install, no runtime to CVE-scan. A reviewer can read the whole thing, or just turn the network off.</td></tr>
         <tr><td class="q">Is it maintainable?</td><td>It is plain text. It diffs in git, reviews like code, and has no framework or build step to churn or break next quarter.</td></tr>
-        <tr><td class="q">Is it auditable?</td><td>It attaches to a change ticket or audit pack as one file, and still opens in two years with nothing but a browser.</td></tr>
+        <tr><td class="q">Does it work as a record?</td><td>It attaches to a change ticket or evidence pack as one file, and still opens in two years with nothing but a browser. A person signs off on the contents.</td></tr>
         <tr><td class="q">Better than a PDF or PowerPoint?</td><td>For interactive evidence, yes: it is filterable and printable <em>and</em> diffable. A PDF is none of those, and a deck is not attachable as record.</td></tr>
         <tr class="honest"><td class="q">Will every LLM nail it first try?</td><td><b>No — and that honesty is the point.</b> You iterate a few rounds, in any capable model. These are the bar to aim for, not a guaranteed first answer. None will reproduce them byte for byte.</td></tr>
       </table>
@@ -684,7 +686,7 @@ decommission sign-off moved to 17 Jul.
       <div class="why-card"><b>Opens everywhere</b><span>Every locked-down corporate laptop already ships the only runtime it needs: a browser.</span></div>
       <div class="why-card"><b>No new licences</b><span>No viewer, no SaaS seat, no procurement cycle between your document and its reader.</span></div>
       <div class="why-card"><b>Diffable in git</b><span>It is plain text. Version it, review it, and trace who changed what, like any other code.</span></div>
-      <div class="why-card"><b>Attachable as evidence</b><span>Drops into a change ticket, audit pack or mail thread as one file that still works when opened.</span></div>
+      <div class="why-card"><b>Attachable as evidence</b><span>Drops into a change ticket, evidence pack or mail thread as one file that still works when opened.</span></div>
       <div class="why-card"><b>Works air-gapped</b><span>Zero external requests by construction. Verify it with one grep, or by turning the network off.</span></div>
     </div>
   </div>
